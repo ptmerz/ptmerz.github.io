@@ -19,16 +19,8 @@ jobs:
     steps:
       # Check out current repo
       - uses: actions/checkout@v2
-      # Build the site
-      - name: Jekyll build
-        uses: docker://jekyll/jekyll
+      # Build and deploy the site
+      - name: Build and deploy
+        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
         with:
-          args: jekyll build
-      # Deploy it to gh-pages
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3.8.0
-        if: github.event_name == 'push'
-        with:
-          deploy_key: ${{ secrets.SSH_DEPLOY_KEY }}
-          publish_branch: gh-pages
-          publish_dir: ./_site
+          github_token: ${{ secrets.GITHUB_TOKEN }}
