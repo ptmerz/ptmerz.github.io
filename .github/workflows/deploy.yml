@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       # Build the site
       - name: Jekyll build
-        uses: docker://jekyll/jekyll@v4.2.1
+        uses: docker://jekyll/jekyll:4.2.1
         with:
           args: jekyll build
       # Deploy it to gh-pages
