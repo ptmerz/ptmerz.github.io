@@ -1,6 +1,9 @@
 ---
 title: "CV"
-permalink: /cv
+permalink: /cv/
+toc: true
+toc_label: "Contents"
+toc_sticky: true
 ---
 ## Professional experience
 ### Postdoctoral Researcher / Software Scientist
