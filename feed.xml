@@ -1,25 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-07T23:15:47+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Minimal Mistakes and MathJax</title><link href="https://ptmerz.github.io/mmistakes-mathjax/" rel="alternate" type="text/html" title="Minimal Mistakes and MathJax" /><published>2021-12-07T00:00:00+00:00</published><updated>2021-12-07T00:00:00+00:00</updated><id>https://ptmerz.github.io/mmistakes-mathjax</id><content type="html" xml:base="https://ptmerz.github.io/mmistakes-mathjax/">&lt;p&gt;After setting up this website with the beautiful
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-09T19:11:08+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Minimal Mistakes and MathJax</title><link href="https://ptmerz.github.io/blog/mmistakes-mathjax/" rel="alternate" type="text/html" title="Minimal Mistakes and MathJax" /><published>2021-12-07T00:00:00+00:00</published><updated>2021-12-07T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/mmistakes-mathjax</id><content type="html" xml:base="https://ptmerz.github.io/blog/mmistakes-mathjax/">&lt;p&gt;After setting up this website with the beautiful
 &lt;a href=&quot;https://github.com/mmistakes/minimal-mistakes&quot;&gt;Minimal Mistakes theme&lt;/a&gt;, I noticed that it
 wasn’t supporting typesetting math equations. Well, it can’t be too hard to get this to work,
 right? Right…&lt;/p&gt;
 
 &lt;p&gt;Note that I am using Minimal Mistakes as a remote theme, and I would really like to keep it
-that way if possible. Using a remote theme reduces the bloat of my repository, and should make
-updating the theme easy. So any solution I’m finding should, if possible, not break any future
+that way if possible. Using a remote theme reduces the bloat of my repository, and means I’m
+always getting the latest version. So any solution I’m finding should, if possible, not break
 updates!&lt;/p&gt;
 
-&lt;p&gt;After a bit of digging, I quickly understood that I’d need to set up the
+&lt;p&gt;After a bit of digging, it decided I’d try to set up the
 &lt;a href=&quot;https://www.mathjax.org&quot;&gt;MathJax JavaScript library&lt;/a&gt;. Unfortunately, none of the suggestions
 (&lt;a href=&quot;https://github.com/mmistakes/minimal-mistakes/issues/735&quot;&gt;1&lt;/a&gt;,
 &lt;a href=&quot;https://sort-care.github.io/Latex-on-Blog/&quot;&gt;2&lt;/a&gt;) I found seemed to work properly - the
 equations would either not render at all or render with weird typesetting errors. Finally,
 I found that Academic Pages, a fork of Minimal Mistakes, has working MathJax support which
-is enabled by a few lines of which are added to the header of each file. I copied the
+is enabled by a few lines which are added to the header of each file. I copied the
 last few lines from
 &lt;a href=&quot;https://github.com/academicpages/academicpages.github.io/blob/master/_includes/head/custom.html&quot;&gt;here&lt;/a&gt;
-and put them into a newly created &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_includes/head/custom.html&lt;/code&gt; in my repo. Since that
-file is empty in the upstream Minimal Mistakes repo, there is a good chance that this won’t
-lead to problems with future versions of the theme!&lt;/p&gt;
+and put them into a newly created &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_includes/head/custom.html&lt;/code&gt; in my repo. This is a file
+which gets added automatically to the header of each Markdown file when it is converted to
+HTML. This file exists in the upstream Minimal Mistakes repo, but it is empty. If Jekyll finds a
+file both in the remote theme and in the local repo, it will prefer the local file. So as long
+as future versions of Minimal Mistakes will not start using that file, using it locally won’t
+cause any problems when updating.&lt;/p&gt;
 
 &lt;p&gt;Here’s how my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_includes/head/custom.html&lt;/code&gt; looks now:&lt;/p&gt;
 &lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text/x-mathjax-config&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
@@ -32,7 +35,7 @@ lead to problems with future versions of the theme!&lt;/p&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML'&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;async&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Note that I left out a line from the Academic Pages header, which reads&lt;/p&gt;
+&lt;p&gt;Note that I left out one line from the Academic Pages header, which reads&lt;/p&gt;
 &lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text/x-mathjax-config&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;MathJax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Hub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;TeX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;equationNumbers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;autoNumber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;This line would enable equation numbering by default. I don’t want equation numbers as a default, so
@@ -40,4 +43,4 @@ I left this out. I should also play around a bit to see if different MathJax ver
 for now I’m just happy I can typeset nice equations inline, like $a^2 + b^2 = c^2$, and in display
 mode&lt;/p&gt;
 
-\[i \hbar \frac{\partial}{\partial t}\Psi(\mathbf{r},t) = \hat H \Psi(\mathbf{r},t)\]</content><author><name>Pascal T. Merz</name></author><summary type="html">After setting up this website with the beautiful Minimal Mistakes theme, I noticed that it wasn’t supporting typesetting math equations. Well, it can’t be too hard to get this to work, right? Right…</summary></entry></feed>
+\[i \hbar \frac{\partial}{\partial t}\Psi(\mathbf{r},t) = \hat H \Psi(\mathbf{r},t)\]</content><author><name>Pascal T. Merz</name></author><category term="Blogging platform" /><category term="Minimal Mistakes" /><category term="Jekyll" /><category term="MathJax" /><summary type="html">After setting up this website with the beautiful Minimal Mistakes theme, I noticed that it wasn’t supporting typesetting math equations. Well, it can’t be too hard to get this to work, right? Right…</summary></entry></feed>
