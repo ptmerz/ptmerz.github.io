@@ -1,1 +1,1 @@
-Sitemap: https://ptmerz.github.io/pages/ptmerz/sitemap.xml
+Sitemap: https://ptmerz.github.io/sitemap.xml
