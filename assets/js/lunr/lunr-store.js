@@ -4,4 +4,10 @@ var store = [{
         "tags": ["Minimal Mistakes","Jekyll","MathJax"],
         "url": "/blog/mmistakes-mathjax/",
         "teaser": null
+      },{
+        "title": "Enabling blog comments using `giscus`",
+        "excerpt":"Minimal Mistakes offers built-in support for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first three are external services. I didn’t pursue these options further, because I would prefer to avoid external trackers and heavy assets on my website. Staticman allows adding comments as pushes or pull requests...","categories": ["Blogging platform"],
+        "tags": ["Minimal Mistakes","Jekyll","Comments","giscus"],
+        "url": "/blog/blog-comments/",
+        "teaser": null
       }]

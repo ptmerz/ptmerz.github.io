@@ -1,0 +1,582 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Enabling blog comments using giscus  |  Pascal T. Merz</title>
+<meta name="description" content="Minimal Mistakes offers built-in support for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first three are external services. I didn’t pursue these options further, because I would prefer to avoid external trackers and heavy assets on my website. Staticman allows adding comments as pushes or pull requests to the static site, making them effectively part of the static site. This would certainly be the most light-weight option, but the setup process and especially the spam handling are a bit intimidating.">
+
+
+  <meta name="author" content="Pascal T. Merz">
+  
+  <meta property="article:author" content="Pascal T. Merz">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Pascal T. Merz">
+<meta property="og:title" content="Enabling blog comments using giscus">
+<meta property="og:url" content="https://ptmerz.github.io/blog/blog-comments/">
+
+
+  <meta property="og:description" content="Minimal Mistakes offers built-in support for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first three are external services. I didn’t pursue these options further, because I would prefer to avoid external trackers and heavy assets on my website. Staticman allows adding comments as pushes or pull requests to the static site, making them effectively part of the static site. This would certainly be the most light-weight option, but the setup process and especially the spam handling are a bit intimidating.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-11T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://ptmerz.github.io/blog/blog-comments/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Pascal T. Merz",
+      "url": "https://ptmerz.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Pascal T. Merz Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Pascal T. Merz
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/blog/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/cv/">CV</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/pascal_merz.jpg" alt="Pascal T. Merz" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Pascal T. Merz</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Scientific Software<br />Molecular Simulations</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="mailto:pascal.merz@me.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/ptmerz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://gitlab.com/ptmerz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-gitlab" aria-hidden="true"></i><span class="label">GitLab</span></a></li>
+          
+        
+          
+            <li><a href="https://linkedin.com/in/pascal-t-merz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Enabling blog comments using giscus">
+    <meta itemprop="description" content="Minimal Mistakes offersbuilt-in supportfor commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The firstthree are external services. I didn’t pursue these options further, because I would prefer toavoid external trackers and heavy assets on my website. Staticman allows adding comments aspushes or pull requests to the static site, making them effectively part of the static site.This would certainly be the most light-weight option, but the setup process and especiallythe spam handling are a bit intimidating.">
+    <meta itemprop="datePublished" content="2021-12-11T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Enabling blog comments using <code class="language-plaintext highlighter-rouge">giscus</code>
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Minimal Mistakes offers
+<a href="https://mmistakes.github.io/minimal-mistakes/docs/configuration/#comments">built-in support</a>
+for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first
+three are external services. I didn’t pursue these options further, because I would prefer to
+avoid external trackers and heavy assets on my website. Staticman allows adding comments as
+pushes or pull requests to the static site, making them effectively part of the static site.
+This would certainly be the most light-weight option, but the setup process and especially
+the spam handling are a bit intimidating.</p>
+
+<p>utterances and giscus leverage GitHub functionality to provide comments. Both are open source
+and promise to have no tracking, no ads, and be always free. utterances (mis)uses
+GitHub issues on the repository for the comments, while giscus uses the new GitHub discussions
+functionality. Since the latter sounds more like using functionality how it was meant to be
+used and less like a hack, I decided to go for giscus.</p>
+
+<p>The Minimal Mistakes
+<a href="https://mmistakes.github.io/minimal-mistakes/docs/configuration/#giscus-comments">documentation</a>
+does a great job at explaining the steps, which roughly consist of</p>
+<ol>
+  <li>Turn on the “Discussions” feature of the repository under Settings &gt; Options &gt; Features.</li>
+  <li>Install the <a href="https://github.com/apps/giscus">giscus</a> app in the repository.</li>
+  <li>Head to <a href="https://giscus.app">https://giscus.app</a> and fill out the details. Most of it is
+self-explanatory and for the rest I went with the default choice hoping for the best.
+Specifically, I wasn’t sure about the “Page ↔️ Discussions Mapping”, so I left the default
+“Discussion title contains page <code class="language-plaintext highlighter-rouge">pathname</code>”. I picked the “Announcements” category and chose
+to enable reactions. These settings are populating a JavaScript snippet that appears at the 
+bottom of the page. Since Minimal Mistakes has built-in functionality for giscus, we will 
+actually not copy that snippet, but use the settings in the Minimal Mistakes configuration file.</li>
+  <li>Adapt the Minimal Mistakes <code class="language-plaintext highlighter-rouge">_config.yml</code>: Make sure that the <code class="language-plaintext highlighter-rouge">repository</code> tag is set, set the
+<code class="language-plaintext highlighter-rouge">provider</code> in the <code class="language-plaintext highlighter-rouge">comments</code> section to <code class="language-plaintext highlighter-rouge">"giscus"</code>, and fill the variables in the <code class="language-plaintext highlighter-rouge">giscus</code>
+section by using the values in the JavaScript snippet.</li>
+  <li>Finally, set <code class="language-plaintext highlighter-rouge">comments: true</code> in the YAML front matter of the posts. This can either be done
+on a per-post-basis, by adding this in the front matter of the posts that should have comments,
+or globally by changing the default in the <code class="language-plaintext highlighter-rouge">_config.yml</code> file for the posts category.</li>
+</ol>
+
+<p>Having done all that, I pushed and reloaded the page and - nothing showed up! It turns out that
+Minimal Mistakes only turns comments on when Jekyll is run in a <code class="language-plaintext highlighter-rouge">production</code> environment, while 
+Jekyll is in a <code class="language-plaintext highlighter-rouge">development</code> environment by default
+(<a href="https://jekyllrb.com/docs/configuration/environments/">reference</a>). The GitHub action I’m using
+to build and deploy the Jekyll site was running Jekyll in a <code class="language-plaintext highlighter-rouge">development</code> environment. Fixing that
+did the trick.</p>
+
+<p>You can see the results of my efforts under this post! I am actually really happy with how that
+looks and feels. I think that a lot of people that could want to interact with these posts will
+have a GitHub account, so using that account to comment seems like a very low barrier. If people
+prefer not to grant giscus the required GitHub OAuth authorization, they can post directly on the
+GitHub Discussions. The comments support the same rich Markdown and reactions as is being used
+all over GitHub, and the option to add post reactions is a nice little addition. Finally, I also
+think that the looks fit well with the rest of the site layout.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#comments" class="page__taxonomy-item" rel="tag">Comments</a><span class="sep">, </span>
+    
+      <a href="/tags/#giscus" class="page__taxonomy-item" rel="tag">giscus</a><span class="sep">, </span>
+    
+      <a href="/tags/#jekyll" class="page__taxonomy-item" rel="tag">Jekyll</a><span class="sep">, </span>
+    
+      <a href="/tags/#minimal-mistakes" class="page__taxonomy-item" rel="tag">Minimal Mistakes</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blogging-platform" class="page__taxonomy-item" rel="tag">Blogging platform</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-12-11T00:00:00+00:00">December 11, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Enabling+blog+comments+using+%60giscus%60%20https%3A%2F%2Fptmerz.github.io%2Fblog%2Fblog-comments%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fptmerz.github.io%2Fblog%2Fblog-comments%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fptmerz.github.io%2Fblog%2Fblog-comments%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/mmistakes-mathjax/" class="pagination--pager" title="Minimal Mistakes and MathJax
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="giscus-comments"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/mmistakes-mathjax/" rel="permalink">Minimal Mistakes and MathJax
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">After setting up this website with the beautiful
+Minimal Mistakes theme, I noticed that it
+wasn’t supporting typesetting math equations. Well, it can’t be to...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Pascal T. Merz. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    <script>
+  'use strict';
+
+  (function () {
+    var commentContainer = document.querySelector('#giscus-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://giscus.app/client.js');
+    script.setAttribute('data-repo', 'ptmerz/ptmerz.github.io');
+    script.setAttribute('data-repo-id', 'R_kgDOGfDKdQ');
+    script.setAttribute('data-category', 'Announcements');
+    script.setAttribute('data-category-id', 'DIC_kwDOGfDKdc4CAPY8');
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-theme', 'light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+  
+
+
+
+
+
+  </body>
+</html>

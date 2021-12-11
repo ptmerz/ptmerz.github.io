@@ -1,4 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-11T22:25:09+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Minimal Mistakes and MathJax</title><link href="https://ptmerz.github.io/blog/mmistakes-mathjax/" rel="alternate" type="text/html" title="Minimal Mistakes and MathJax" /><published>2021-12-07T00:00:00+00:00</published><updated>2021-12-07T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/mmistakes-mathjax</id><content type="html" xml:base="https://ptmerz.github.io/blog/mmistakes-mathjax/">&lt;p&gt;After setting up this website with the beautiful
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-11T23:23:37+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Enabling blog comments using `giscus`</title><link href="https://ptmerz.github.io/blog/blog-comments/" rel="alternate" type="text/html" title="Enabling blog comments using `giscus`" /><published>2021-12-11T00:00:00+00:00</published><updated>2021-12-11T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/blog-comments</id><content type="html" xml:base="https://ptmerz.github.io/blog/blog-comments/">&lt;p&gt;Minimal Mistakes offers
+&lt;a href=&quot;https://mmistakes.github.io/minimal-mistakes/docs/configuration/#comments&quot;&gt;built-in support&lt;/a&gt;
+for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first
+three are external services. I didn’t pursue these options further, because I would prefer to
+avoid external trackers and heavy assets on my website. Staticman allows adding comments as
+pushes or pull requests to the static site, making them effectively part of the static site.
+This would certainly be the most light-weight option, but the setup process and especially
+the spam handling are a bit intimidating.&lt;/p&gt;
+
+&lt;p&gt;utterances and giscus leverage GitHub functionality to provide comments. Both are open source
+and promise to have no tracking, no ads, and be always free. utterances (mis)uses
+GitHub issues on the repository for the comments, while giscus uses the new GitHub discussions
+functionality. Since the latter sounds more like using functionality how it was meant to be
+used and less like a hack, I decided to go for giscus.&lt;/p&gt;
+
+&lt;p&gt;The Minimal Mistakes
+&lt;a href=&quot;https://mmistakes.github.io/minimal-mistakes/docs/configuration/#giscus-comments&quot;&gt;documentation&lt;/a&gt;
+does a great job at explaining the steps, which roughly consist of&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Turn on the “Discussions” feature of the repository under Settings &amp;gt; Options &amp;gt; Features.&lt;/li&gt;
+  &lt;li&gt;Install the &lt;a href=&quot;https://github.com/apps/giscus&quot;&gt;giscus&lt;/a&gt; app in the repository.&lt;/li&gt;
+  &lt;li&gt;Head to &lt;a href=&quot;https://giscus.app&quot;&gt;https://giscus.app&lt;/a&gt; and fill out the details. Most of it is
+self-explanatory and for the rest I went with the default choice hoping for the best.
+Specifically, I wasn’t sure about the “Page ↔️ Discussions Mapping”, so I left the default
+“Discussion title contains page &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pathname&lt;/code&gt;”. I picked the “Announcements” category and chose
+to enable reactions. These settings are populating a JavaScript snippet that appears at the 
+bottom of the page. Since Minimal Mistakes has built-in functionality for giscus, we will 
+actually not copy that snippet, but use the settings in the Minimal Mistakes configuration file.&lt;/li&gt;
+  &lt;li&gt;Adapt the Minimal Mistakes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;: Make sure that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repository&lt;/code&gt; tag is set, set the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt; in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;comments&lt;/code&gt; section to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;giscus&quot;&lt;/code&gt;, and fill the variables in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;giscus&lt;/code&gt;
+section by using the values in the JavaScript snippet.&lt;/li&gt;
+  &lt;li&gt;Finally, set &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;comments: true&lt;/code&gt; in the YAML front matter of the posts. This can either be done
+on a per-post-basis, by adding this in the front matter of the posts that should have comments,
+or globally by changing the default in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt; file for the posts category.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Having done all that, I pushed and reloaded the page and - nothing showed up! It turns out that
+Minimal Mistakes only turns comments on when Jekyll is run in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;production&lt;/code&gt; environment, while 
+Jekyll is in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;development&lt;/code&gt; environment by default
+(&lt;a href=&quot;https://jekyllrb.com/docs/configuration/environments/&quot;&gt;reference&lt;/a&gt;). The GitHub action I’m using
+to build and deploy the Jekyll site was running Jekyll in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;development&lt;/code&gt; environment. Fixing that
+did the trick.&lt;/p&gt;
+
+&lt;p&gt;You can see the results of my efforts under this post! I am actually really happy with how that
+looks and feels. I think that a lot of people that could want to interact with these posts will
+have a GitHub account, so using that account to comment seems like a very low barrier. If people
+prefer not to grant giscus the required GitHub OAuth authorization, they can post directly on the
+GitHub Discussions. The comments support the same rich Markdown and reactions as is being used
+all over GitHub, and the option to add post reactions is a nice little addition. Finally, I also
+think that the looks fit well with the rest of the site layout.&lt;/p&gt;</content><author><name>Pascal T. Merz</name></author><category term="Blogging platform" /><category term="Minimal Mistakes" /><category term="Jekyll" /><category term="Comments" /><category term="giscus" /><summary type="html">Minimal Mistakes offers built-in support for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first three are external services. I didn’t pursue these options further, because I would prefer to avoid external trackers and heavy assets on my website. Staticman allows adding comments as pushes or pull requests to the static site, making them effectively part of the static site. This would certainly be the most light-weight option, but the setup process and especially the spam handling are a bit intimidating.</summary></entry><entry><title type="html">Minimal Mistakes and MathJax</title><link href="https://ptmerz.github.io/blog/mmistakes-mathjax/" rel="alternate" type="text/html" title="Minimal Mistakes and MathJax" /><published>2021-12-07T00:00:00+00:00</published><updated>2021-12-07T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/mmistakes-mathjax</id><content type="html" xml:base="https://ptmerz.github.io/blog/mmistakes-mathjax/">&lt;p&gt;After setting up this website with the beautiful
 &lt;a href=&quot;https://github.com/mmistakes/minimal-mistakes&quot;&gt;Minimal Mistakes theme&lt;/a&gt;, I noticed that it
 wasn’t supporting typesetting math equations. Well, it can’t be too hard to get this to work,
 right? Right…&lt;/p&gt;
