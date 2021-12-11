@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>https://ptmerz.github.io/blog/mmistakes-mathjax/</loc>
+<loc>https://ptmerz.github.io/pages/ptmerz/blog/mmistakes-mathjax/</loc>
 <lastmod>2021-12-07T00:00:00+00:00</lastmod>
 </url>
 <url>
-<loc>https://ptmerz.github.io/blog/</loc>
+<loc>https://ptmerz.github.io/pages/ptmerz/blog/</loc>
 </url>
 <url>
-<loc>https://ptmerz.github.io/categories/</loc>
+<loc>https://ptmerz.github.io/pages/ptmerz/categories/</loc>
 </url>
 <url>
-<loc>https://ptmerz.github.io/cv/</loc>
+<loc>https://ptmerz.github.io/pages/ptmerz/cv/</loc>
 </url>
 <url>
-<loc>https://ptmerz.github.io/</loc>
+<loc>https://ptmerz.github.io/pages/ptmerz/</loc>
 </url>
 <url>
-<loc>https://ptmerz.github.io/tags/</loc>
+<loc>https://ptmerz.github.io/pages/ptmerz/tags/</loc>
 </url>
 </urlset>
