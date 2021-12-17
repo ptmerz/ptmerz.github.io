@@ -18,10 +18,17 @@ jobs:
       # Check out current repo
       - name: Checkout current repository
         uses: actions/checkout@v2
+      - name: List directory
+        run: |
+          pwd
+          ls -a -l
       # Convert notebooks to Markdown posts
       - name: Convert Jupyter notebooks to Markdown blog posts
         uses: ptmerz/jupyter-minimal-mistakes@30107b348e7544c1d18e8bb0d41858f2dee8ecbc
-
+      - name: List directory
+        run: |
+          pwd
+          ls -a -l
       # Build and deploy the site
       - name: Build and deploy
         uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
