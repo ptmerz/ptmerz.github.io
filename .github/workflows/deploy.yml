@@ -20,7 +20,8 @@ jobs:
         uses: actions/checkout@v2
       # Convert notebooks to Markdown posts
       - name: Convert Jupyter notebooks to Markdown blog posts
-        uses: ptmerz/jupyter-minimal-mistakes
+        uses: ptmerz/jupyter-minimal-mistakes@b9908d0
+
       # Build and deploy the site
       - name: Build and deploy
         uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
