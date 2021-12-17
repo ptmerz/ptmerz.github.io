@@ -33,9 +33,9 @@ jobs:
       # Build and deploy the site
       - name: Build and deploy
         uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
-          with:
-            skip_deploy: 'true'
-            jekyll_build_opts: '--verbose'
+        with:
+          skip_deploy: 'true'
+          jekyll_build_opts: '--verbose'
         env:
           JEKYLL_ENV: 'production'
         with:
