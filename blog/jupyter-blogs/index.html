@@ -1,0 +1,852 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Turning Jupyter notebooks into Jekyll blog posts  |  Pascal T. Merz</title>
+<meta name="description" content="One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works well with the Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of the website. I don’t think I need a very complicated solution - a static version of the notebook like it is for example used by nbsphinx should be enough. I used nbsphinx recently to include usage examples into the physical_validation documentation (see e.g. here), and quite liked the result. If I get this to work nicely, I do have a few additional features on my wish list, however:    An automatic link to the source notebook on GitHub, which would allow readers to easily download the notebook and run it locally.   An integration with Google Colab, which would allow readers to run the notebook online.   Hiding certain input or output cells would allow me to highlight specific things while hiding less interesting boilerplate code without completely removing it.">
+
+
+  <meta name="author" content="Pascal T. Merz">
+  
+  <meta property="article:author" content="Pascal T. Merz">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Pascal T. Merz">
+<meta property="og:title" content="Turning Jupyter notebooks into Jekyll blog posts">
+<meta property="og:url" content="https://ptmerz.github.io/blog/jupyter-blogs/">
+
+
+  <meta property="og:description" content="One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works well with the Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of the website. I don’t think I need a very complicated solution - a static version of the notebook like it is for example used by nbsphinx should be enough. I used nbsphinx recently to include usage examples into the physical_validation documentation (see e.g. here), and quite liked the result. If I get this to work nicely, I do have a few additional features on my wish list, however:    An automatic link to the source notebook on GitHub, which would allow readers to easily download the notebook and run it locally.   An integration with Google Colab, which would allow readers to run the notebook online.   Hiding certain input or output cells would allow me to highlight specific things while hiding less interesting boilerplate code without completely removing it.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-17T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://ptmerz.github.io/blog/jupyter-blogs/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Pascal T. Merz",
+      "url": "https://ptmerz.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Pascal T. Merz Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+  </head>
+
+  <body class="layout--notebook">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Pascal T. Merz
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/blog/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/cv/">CV</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/pascal_merz.jpg" alt="Pascal T. Merz" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Pascal T. Merz</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Scientific Software<br />Molecular Simulations</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="mailto:pascal.merz@me.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/ptmerz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://gitlab.com/ptmerz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-gitlab" aria-hidden="true"></i><span class="label">GitLab</span></a></li>
+          
+        
+          
+            <li><a href="https://linkedin.com/in/pascal-t-merz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Turning Jupyter notebooks into Jekyll blog posts">
+    <meta itemprop="description" content="One functionality I really want for my blog is to be able to easily turn Jupyter notebooksinto blog posts. I do much exploration in notebooks, so being able to use them as the baseof blog posts would be great. I am hoping to find a solution which works well with theMinimal Mistakes theme I’m using to make the result fit nicely with the remaining design ofthe website. I don’t think I need a very complicated solution - a static version of thenotebook like it is for example used by nbsphinx should be enough. I used nbsphinxrecently to include usage examples into the physical_validation documentation (see e.g.here),and quite liked the result.If I get this to work nicely, I do have a few additional features on my wish list, however:  An automatic link to the source notebook on GitHub, which would allow readers to easilydownload the notebook and run it locally.  An integration with Google Colab, which would allow readers to run the notebook online.  Hiding certain input or output cells would allow me to highlight specific things whilehiding less interesting boilerplate code without completely removing it.">
+    <meta itemprop="datePublished" content="2021-12-17T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Turning Jupyter notebooks into Jekyll blog posts
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          9 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#getting-started">Getting started</a></li><li><a href="#turning-a-jupyter-notebook-into-a-markdown-jekyll-post">Turning a Jupyter notebook into a Markdown Jekyll post</a><ul><li><a href="#naming-and-file-organization">Naming and file organization</a></li><li><a href="#a-bash-script-to-convert-jupyter-notebooks-to-markdown-jekyll-posts">A bash script to convert Jupyter notebooks to Markdown Jekyll posts</a></li><li><a href="#front-matter">Front matter</a></li></ul></li><li><a href="#links-to-github-and-google-colab">Links to GitHub and Google Colab</a><ul><li><a href="#links">Links</a></li><li><a href="#badges">Badges</a></li><li><a href="#including-badges-in-blog-posts">Including badges in blog posts</a></li></ul></li><li><a href="#running-the-conversion-as-a-github-action">Running the conversion as a GitHub action</a><ul><li><a href="#starting-point">Starting point</a></li></ul></li><li><a href="#features">Features</a><ul><li><a href="#math-mode">Math mode</a></li><li><a href="#matplotlib-plot">Matplotlib plot</a></li><li><a href="#code-with-output">Code with output</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+
+<p>One functionality I really want for my blog is to be able to easily turn Jupyter notebooks
+into blog posts. I do much exploration in notebooks, so being able to use them as the base
+of blog posts would be great. I am hoping to find a solution which works well with the
+Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of
+the website. I don’t think I need a very complicated solution - a static version of the
+notebook like it is for example used by <code class="language-plaintext highlighter-rouge">nbsphinx</code> should be enough. I used <code class="language-plaintext highlighter-rouge">nbsphinx</code>
+recently to include usage examples into the <code class="language-plaintext highlighter-rouge">physical_validation</code> documentation (see e.g.
+<a href="https://physical-validation.readthedocs.io/en/stable/examples/kinetic_energy_distribution.html">here</a>),
+and quite liked the result.
+If I get this to work nicely, I do have a few additional features on my wish list, however:</p>
+<ul>
+  <li>An automatic link to the source notebook on GitHub, which would allow readers to easily
+download the notebook and run it locally.</li>
+  <li>An integration with Google Colab, which would allow readers to run the notebook online.</li>
+  <li>Hiding certain input or output cells would allow me to highlight specific things while
+hiding less interesting boilerplate code without completely removing it.</li>
+</ul>
+
+<h1 id="getting-started">Getting started</h1>
+<p>There are multiple blog posts explaining how to turn Jupyter notebooks into either Markdown
+or HTML files (e.g. <a href="https://cduvallet.github.io/posts/2018/03/ipython-notebooks-jekyll">1</a>,
+<a href="https://jaketae.github.io/blog/jupyter-automation/">2</a>,
+<a href="http://www.kasimte.com/adding-and-including-jupyter-notebooks-as-jekyll-blog-posts">3</a>)
+using <code class="language-plaintext highlighter-rouge">nbconvert</code>. If there are plots in the notebook, <code class="language-plaintext highlighter-rouge">nbconvert</code> turns them into png images
+which are then embedded in the Markdown document. Using the resulting files as Jekyll posts
+does then only require adjusting a few things like headers or image paths, moving the files
+in the right folder, and upload the result. This sounds like a viable option!</p>
+
+<p>There are several additional options I found which don’t perfectly fit for what I’m trying
+to achieve, but look very interesting:</p>
+<ul>
+  <li><a href="https://github.com/fastai/fastpages"><code class="language-plaintext highlighter-rouge">fastpages</code></a>, a blogging platform which supports
+Markdown and Jupyter notebooks (and even Word docs!). This looks extremely powerful, but
+after some exploration I found that trying to fit the result into my existing site did not
+yield satisfactory results. I think this is a great project, though!</li>
+  <li><a href="https://jupyterbook.org">Jupyter Book</a> turns notebooks into beautiful books
+or articles. This looks amazing for standalone projects, but I don’t see an easy way to fit
+the result into my existing page.</li>
+  <li><a href="https://github.com/red-data-tools/jekyll-jupyter-notebook">Jekyll Jupyter Notebook plugin</a>
+allows to embed Jupyter notebooks in Markdown documents used by Jekyll. This seems
+really useful, but is not exactly what I’m looking for here - I would prefer to write the
+entire post in a notebook rather than including a notebook into a Markdown post.</li>
+</ul>
+
+<p>I decided to use <code class="language-plaintext highlighter-rouge">nbconvert</code> to create Markdown files (and not directly HTML). My reasoning was
+that this approach would have a higher likelihood to create posts with the right look, as they
+would be processed by Jekyll in the same way as the rest of the site. This also meant that I
+could write the YAML front matter for the posts in a Markdown cell, which should then be left
+alone by <code class="language-plaintext highlighter-rouge">nbconvert</code>. Finally, it would also mean that the automatic excerpt function of the
+Minimal Mistakes theme (taking the first paragraph as an excerpt if it isn’t defined differently)
+should work properly.</p>
+
+<h1 id="turning-a-jupyter-notebook-into-a-markdown-jekyll-post">Turning a Jupyter notebook into a Markdown Jekyll post</h1>
+
+<h2 id="naming-and-file-organization">Naming and file organization</h2>
+<p>When converting a Jupyter notebook to Markdown, <code class="language-plaintext highlighter-rouge">nbconvert</code> will by default write a Markdown file
+with the same base name as the notebook, changing only the file extension. The Markdown conversion
+of a notebook named <code class="language-plaintext highlighter-rouge">basename.ipynb</code> will be saved in a file called <code class="language-plaintext highlighter-rouge">basename.md</code>. Since Jekyll
+blog posts are required to be named as <code class="language-plaintext highlighter-rouge">YEAR-MONTH-DAY-title.md</code> (
+<a href="https://jekyllrb.com/docs/posts/">reference</a>), it is easiest to follow that naming
+for notebooks. A notebook which should become a blog post should hence be named
+<code class="language-plaintext highlighter-rouge">YEAR-MONTH-DAY-title.ipynb</code>.</p>
+
+<p>Blog posts on Jekyll sites live in the <code class="language-plaintext highlighter-rouge">_posts</code> folder. I decided to follow the example of <code class="language-plaintext highlighter-rouge">fastpages</code>
+and create a <code class="language-plaintext highlighter-rouge">_notebooks</code> folder in which to store the notebooks. I will then move the resulting
+Markdown file into the <code class="language-plaintext highlighter-rouge">_posts</code> folder, where it will be picked up by Jekyll. I will also move the
+images into the <code class="language-plaintext highlighter-rouge">assets/images/</code> folder, which is the default location for images.</p>
+
+<h2 id="a-bash-script-to-convert-jupyter-notebooks-to-markdown-jekyll-posts">A bash script to convert Jupyter notebooks to Markdown Jekyll posts</h2>
+<p>As a recap, here’s the steps we need to take:</p>
+<ul>
+  <li>Use <code class="language-plaintext highlighter-rouge">nbconvert</code> to convert Jupyter notebook to Markdown</li>
+  <li>Change image paths from local paths to absolute paths in <code class="language-plaintext highlighter-rouge">assets/images/</code></li>
+  <li>Move the resulting Markdown file into the <code class="language-plaintext highlighter-rouge">_posts</code> folder</li>
+  <li>Move the image folder to <code class="language-plaintext highlighter-rouge">assets/images/</code>.</li>
+</ul>
+
+<p>This can easily be done by a few lines of bash with some perl support (and a call to <code class="language-plaintext highlighter-rouge">jupyter nbconvert</code>
+which does the heavy-lifting, of course):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Get file name without extension</span>
+<span class="nv">filename</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">notebook_file</span><span class="p">%.*</span><span class="k">}</span><span class="s2">"</span>
+<span class="c"># Name of Markdown file will be base name + ".md"</span>
+<span class="nv">md_notebook</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">filename</span><span class="k">}</span><span class="s2">.md"</span>
+<span class="c"># Convert notebook to Markdown</span>
+jupyter nbconvert <span class="s2">"</span><span class="nv">$notebook_file</span><span class="s2">"</span> <span class="nt">--to</span> markdown
+<span class="c"># Fix image links to point to a place where Jekyll will pick up the images</span>
+perl <span class="nt">-pi</span> <span class="nt">-e</span> <span class="s1">'s/\[png\]\(/[png]({{ site.url }}{{ site.baseurl }}\/assets\/images\//g'</span> <span class="s2">"</span><span class="nv">$md_notebook</span><span class="s2">"</span>
+<span class="c"># Move Markdown notebook to _posts/ directory</span>
+<span class="nb">mv</span> <span class="s2">"</span><span class="nv">$md_notebook</span><span class="s2">"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">root_directory</span><span class="k">}</span><span class="s2">/_posts/"</span>
+<span class="c"># Move images to a assets such that Jekyll finds them</span>
+<span class="nb">mv</span> <span class="s2">"</span><span class="k">${</span><span class="nv">filename</span><span class="k">}</span><span class="s2">_files"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">root_directory</span><span class="k">}</span><span class="s2">/assets/images/"</span>
+</code></pre></div></div>
+
+<h2 id="front-matter">Front matter</h2>
+<p>Since <code class="language-plaintext highlighter-rouge">nbconvert</code> does not change the content of Markdown cells, I can simply define the first cell of the
+notebook to be a Markdown cell and write the YAML front matter there. For example, the first cell of this
+notebook reads</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+title: "Turning Jupyter notebooks into Jekyll blog posts"
+toc: true
+category: "Blogging platform"
+tags: ["Jekyll", "Jupyter", "Minimal Mistakes"]
+badges: true
+---
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">nbconvert</code> will simply print that as the first lines of the created Markdown file. Jekyll will then interpret
+these lines as the YAML front matter, and will render the rest of the post based on the settings set here. I’m pretty
+satisfied with this solution: It’s easy and intuitive to write, and it doesn’t impair the functionality of
+the notebook in any way.</p>
+
+<h1 id="links-to-github-and-google-colab">Links to GitHub and Google Colab</h1>
+<p>Having a way to get the source notebook on GitHub or run in on Google Colab is a great feature that I
+really enjoy on other pages, so I’d love to have that on my blog. <a href="https://github.com/fastai/fastpages"><code class="language-plaintext highlighter-rouge">fastpages</code></a>
+has built-in functionality to add badges that I think works and looks great, so I will try to replicate
+some of that behavior here.</p>
+
+<h2 id="links">Links</h2>
+<p>Links to files on GitHub do generally have the form 
+<code class="language-plaintext highlighter-rouge">https://github.com/&lt;GitHub username or organization&gt;/&lt;repository name&gt;/blob/&lt;branch&gt;/&lt;file path&gt;</code>.</p>
+
+<p>To run notebooks stored on GitHub in Google Colab, the link has the form
+<code class="language-plaintext highlighter-rouge">https://colab.research.google.com/github/&lt;GitHub username or organization&gt;/&lt;repository name&gt;/blob/&lt;branch&gt;/&lt;file path&gt;</code>.</p>
+
+<p>Knowing this, it’s easy to create links to the notebook generating a blog post.
+I am serving my site from the <code class="language-plaintext highlighter-rouge">main</code> branch, and in my file
+organization mentioned above the notebook is going to be under <code class="language-plaintext highlighter-rouge">_notebooks/&lt;filename&gt;</code>. Note that the
+repository name can be set in the Jekyll configuration, so if the <code class="language-plaintext highlighter-rouge">repository</code> tag was set in <code class="language-plaintext highlighter-rouge">_config.yml</code>, the
+repository information in the link can be filled by Jekyll. To achieve this, I simply replaced 
+<code class="language-plaintext highlighter-rouge">&lt;GitHub username or organization&gt;/&lt;repository name&gt;</code> by <code class="language-plaintext highlighter-rouge">{{ site.repository }}</code>. So my links
+are going to read<br />
+<code class="language-plaintext highlighter-rouge">https://github.com/{{site.repository}}/blob/main/_notebooks/&lt;filename&gt;</code><br />
+for GitHub and<br />
+<code class="language-plaintext highlighter-rouge">https://colab.research.google.com/github/{{site.repository}}/blob/main/_notebooks/&lt;filename&gt;</code><br />
+for Google Colab.</p>
+
+<h2 id="badges">Badges</h2>
+<p>Google Colab offers a badge which looks like this:</p>
+
+<p><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Google Colab" /></p>
+
+<p>I didn’t find a comparable badge for GitHub, but using <a href="https://shields.io">shields.io</a> it’s easy to create one:</p>
+
+<p><img src="https://img.shields.io/static/v1?label=&amp;message=Open%20on%20GitHub&amp;logo=github&amp;color=lightgray&amp;labelColor=gray" alt="GitHub" /></p>
+
+<h2 id="including-badges-in-blog-posts">Including badges in blog posts</h2>
+<p>To include the badges in blog posts, I decided, again inspired by <code class="language-plaintext highlighter-rouge">fastpages</code>, to add a new layout called <code class="language-plaintext highlighter-rouge">notebook</code> to Minimal Mistakes. That new
+layout is the same as the default <code class="language-plaintext highlighter-rouge">single</code> layout, but adds the badges. This solution has a couple of nice properties:</p>
+<ul>
+  <li>It’s update friendly: If the <code class="language-plaintext highlighter-rouge">single</code> layout is changed, <code class="language-plaintext highlighter-rouge">notebook</code> is updated accordingly.</li>
+  <li>It works with the default excerpts: By default, the excerpt which is used to create the pagination links is done by
+taking the first few lines of the content of the post. If the badges were part of the content, the standard excerpt
+of all posts would start with the (non-rendered) code for the badges. By introducing the new layout and making the
+badges part of the layout rather than the content, we are avoiding this problem.</li>
+</ul>
+
+<p>The new layout is only a few lines long and lives in <code class="language-plaintext highlighter-rouge">_layouts/notebook.html</code>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+layout: single
+---
+
+{% if page.badges %}
+  &lt;hr&gt;
+  &lt;div style="display: flex; justify-content: center;"&gt;
+    &lt;div style="padding-left: 0.5em; padding-right: 0.5em;"&gt;
+      &lt;a href="https://github.com/{{ site.repository }}/blob/main/_notebooks/{{ page.filename }}" target="_blank"&gt;
+        &lt;img src="https://img.shields.io/static/v1?label=&amp;message=Open%20on%20GitHub&amp;logo=github&amp;color=lightgray&amp;labelColor=gray" alt="Open on GitHub"&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div style="padding-left: 0.5em; padding-right: 0.5em;"&gt;
+      &lt;a href="https://colab.research.google.com/github/{{ site.repository }}/blob/main/_notebooks/{{ page.filename }}" target="_blank"&gt;
+        &lt;img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;hr&gt;
+{% endif %}
+
+{{ content }}
+</code></pre></div></div>
+
+<p>The first line makes the layout inherit all properties of the <code class="language-plaintext highlighter-rouge">single</code> layout. Before including the page content
+on the last line, there are a few lines of HTML code with some Jekyll tags. The HTML code gets only included if
+<code class="language-plaintext highlighter-rouge">page.badges</code> is true. If it gets included, it adds the two tags with links as described above between two
+horizontal lines <code class="language-plaintext highlighter-rouge">&lt;hr&gt;</code>.</p>
+
+<p>To make this work seamlessly, I extended the bash code above by a few lines to add the <code class="language-plaintext highlighter-rouge">notebook</code> layout and the
+file name to the YAML front matter automatically when converting Jupyter notebook.</p>
+
+<h1 id="running-the-conversion-as-a-github-action">Running the conversion as a GitHub action</h1>
+<h2 id="starting-point">Starting point</h2>
+<p>I am already using GitHub actions to deploy my website to the <code class="language-plaintext highlighter-rouge">gh_pages</code> branch. The workflow is very simple, it
+is checking out the current repository, building the website and pushing the result to <code class="language-plaintext highlighter-rouge">gh_pages</code>. The action is
+run on every push to <code class="language-plaintext highlighter-rouge">main</code>. Here is how my workflow looks currently:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>name: Deployment
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+          
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out current repo
+      - uses: actions/checkout@v2
+      # Build and deploy the site
+      - name: Build and deploy
+        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
+        env:
+          JEKYLL_ENV: 'production'
+        with:
+          github_token: $
+</code></pre></div></div>
+
+<h1 id="features">Features</h1>
+<h2 id="math-mode">Math mode</h2>
+<p>Math mode works in the Markdown part of the notebook, both inline mode $a^2 + b^2 = c^2$ and display mode</p>
+
+\[i \hbar \frac{\partial}{\partial t}\Psi(\mathbf{r},t) = \hat H \Psi(\mathbf{r},t)\]
+
+<h2 id="matplotlib-plot">Matplotlib plot</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="https://ptmerz.github.io/assets/images/2021-12-17-jupyter-blogs_files/2021-12-17-jupyter-blogs_2_0.png" alt="png" /></p>
+
+<h2 id="code-with-output">Code with output</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"one"</span><span class="p">,</span> <span class="s">"two"</span><span class="p">,</span> <span class="s">"three"</span><span class="p">]:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>one
+two
+three
+</code></pre></div></div>
+
+<h1 id="conclusion">Conclusion</h1>
+<p>I am really happy with this solution. I can write blog posts as Jupyter notebooks, needing only to add a
+first cell with the YAML front matter. I can commit these notebooks to GitHub,
+and the GitHub actions take care of the rest. The results fit perfectly in the Minimal Mistake theme, and
+allow readers to view the original notebook on GitHub or in Colab.</p>
+
+<p>There are two small details I might look into some day:</p>
+<ul>
+  <li>I am not completely satisfied by the design of the code output. I would like to make it easier to distinguish
+between the input of a code cell and its output.</li>
+  <li>I would love to have a way to hide / collapse input or output of code cells like Jupyter Book. I think this
+feature would allow to write concise posts focusing on the essential parts. It is challenging, though,
+as it would require to either convert the notebook directly into HTML, or to further process the Markdown
+file created by <code class="language-plaintext highlighter-rouge">jupyter nbconvert</code>.</li>
+</ul>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#jekyll" class="page__taxonomy-item" rel="tag">Jekyll</a><span class="sep">, </span>
+    
+      <a href="/tags/#jupyter" class="page__taxonomy-item" rel="tag">Jupyter</a><span class="sep">, </span>
+    
+      <a href="/tags/#minimal-mistakes" class="page__taxonomy-item" rel="tag">Minimal Mistakes</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blogging-platform" class="page__taxonomy-item" rel="tag">Blogging platform</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-12-17T00:00:00+00:00">December 17, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Turning+Jupyter+notebooks+into+Jekyll+blog+posts%20https%3A%2F%2Fptmerz.github.io%2Fblog%2Fjupyter-blogs%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fptmerz.github.io%2Fblog%2Fjupyter-blogs%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fptmerz.github.io%2Fblog%2Fjupyter-blogs%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/blog-comments/" class="pagination--pager" title="Enabling blog comments using giscus
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="giscus-comments"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/blog-comments/" rel="permalink">Enabling blog comments using <code class="language-plaintext highlighter-rouge">giscus</code>
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Minimal Mistakes offers
+built-in support
+for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first
+three are external servi...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/mmistakes-mathjax/" rel="permalink">Minimal Mistakes and MathJax
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">After setting up this website with the beautiful
+Minimal Mistakes theme, I noticed that it
+wasn’t supporting typesetting math equations. Well, it can’t be to...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Pascal T. Merz. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    <script>
+  'use strict';
+
+  (function () {
+    var commentContainer = document.querySelector('#giscus-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://giscus.app/client.js');
+    script.setAttribute('data-repo', 'ptmerz/ptmerz.github.io');
+    script.setAttribute('data-repo-id', 'R_kgDOGfDKdQ');
+    script.setAttribute('data-category', 'Announcements');
+    script.setAttribute('data-category-id', 'DIC_kwDOGfDKdc4CAPY8');
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-theme', 'light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+  
+
+
+
+
+
+  </body>
+</html>

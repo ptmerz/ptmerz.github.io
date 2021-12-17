@@ -1,4 +1,272 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-17T13:30:50+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Enabling blog comments using `giscus`</title><link href="https://ptmerz.github.io/blog/blog-comments/" rel="alternate" type="text/html" title="Enabling blog comments using `giscus`" /><published>2021-12-11T00:00:00+00:00</published><updated>2021-12-11T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/blog-comments</id><content type="html" xml:base="https://ptmerz.github.io/blog/blog-comments/">&lt;p&gt;Minimal Mistakes offers
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-17T14:27:35+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Turning Jupyter notebooks into Jekyll blog posts</title><link href="https://ptmerz.github.io/blog/jupyter-blogs/" rel="alternate" type="text/html" title="Turning Jupyter notebooks into Jekyll blog posts" /><published>2021-12-17T00:00:00+00:00</published><updated>2021-12-17T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/jupyter-blogs</id><content type="html" xml:base="https://ptmerz.github.io/blog/jupyter-blogs/">&lt;p&gt;One functionality I really want for my blog is to be able to easily turn Jupyter notebooks
+into blog posts. I do much exploration in notebooks, so being able to use them as the base
+of blog posts would be great. I am hoping to find a solution which works well with the
+Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of
+the website. I don’t think I need a very complicated solution - a static version of the
+notebook like it is for example used by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbsphinx&lt;/code&gt; should be enough. I used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbsphinx&lt;/code&gt;
+recently to include usage examples into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;physical_validation&lt;/code&gt; documentation (see e.g.
+&lt;a href=&quot;https://physical-validation.readthedocs.io/en/stable/examples/kinetic_energy_distribution.html&quot;&gt;here&lt;/a&gt;),
+and quite liked the result.
+If I get this to work nicely, I do have a few additional features on my wish list, however:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;An automatic link to the source notebook on GitHub, which would allow readers to easily
+download the notebook and run it locally.&lt;/li&gt;
+  &lt;li&gt;An integration with Google Colab, which would allow readers to run the notebook online.&lt;/li&gt;
+  &lt;li&gt;Hiding certain input or output cells would allow me to highlight specific things while
+hiding less interesting boilerplate code without completely removing it.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;getting-started&quot;&gt;Getting started&lt;/h1&gt;
+&lt;p&gt;There are multiple blog posts explaining how to turn Jupyter notebooks into either Markdown
+or HTML files (e.g. &lt;a href=&quot;https://cduvallet.github.io/posts/2018/03/ipython-notebooks-jekyll&quot;&gt;1&lt;/a&gt;,
+&lt;a href=&quot;https://jaketae.github.io/blog/jupyter-automation/&quot;&gt;2&lt;/a&gt;,
+&lt;a href=&quot;http://www.kasimte.com/adding-and-including-jupyter-notebooks-as-jekyll-blog-posts&quot;&gt;3&lt;/a&gt;)
+using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt;. If there are plots in the notebook, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt; turns them into png images
+which are then embedded in the Markdown document. Using the resulting files as Jekyll posts
+does then only require adjusting a few things like headers or image paths, moving the files
+in the right folder, and upload the result. This sounds like a viable option!&lt;/p&gt;
+
+&lt;p&gt;There are several additional options I found which don’t perfectly fit for what I’m trying
+to achieve, but look very interesting:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/fastai/fastpages&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fastpages&lt;/code&gt;&lt;/a&gt;, a blogging platform which supports
+Markdown and Jupyter notebooks (and even Word docs!). This looks extremely powerful, but
+after some exploration I found that trying to fit the result into my existing site did not
+yield satisfactory results. I think this is a great project, though!&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jupyterbook.org&quot;&gt;Jupyter Book&lt;/a&gt; turns notebooks into beautiful books
+or articles. This looks amazing for standalone projects, but I don’t see an easy way to fit
+the result into my existing page.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/red-data-tools/jekyll-jupyter-notebook&quot;&gt;Jekyll Jupyter Notebook plugin&lt;/a&gt;
+allows to embed Jupyter notebooks in Markdown documents used by Jekyll. This seems
+really useful, but is not exactly what I’m looking for here - I would prefer to write the
+entire post in a notebook rather than including a notebook into a Markdown post.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I decided to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt; to create Markdown files (and not directly HTML). My reasoning was
+that this approach would have a higher likelihood to create posts with the right look, as they
+would be processed by Jekyll in the same way as the rest of the site. This also meant that I
+could write the YAML front matter for the posts in a Markdown cell, which should then be left
+alone by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt;. Finally, it would also mean that the automatic excerpt function of the
+Minimal Mistakes theme (taking the first paragraph as an excerpt if it isn’t defined differently)
+should work properly.&lt;/p&gt;
+
+&lt;h1 id=&quot;turning-a-jupyter-notebook-into-a-markdown-jekyll-post&quot;&gt;Turning a Jupyter notebook into a Markdown Jekyll post&lt;/h1&gt;
+
+&lt;h2 id=&quot;naming-and-file-organization&quot;&gt;Naming and file organization&lt;/h2&gt;
+&lt;p&gt;When converting a Jupyter notebook to Markdown, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt; will by default write a Markdown file
+with the same base name as the notebook, changing only the file extension. The Markdown conversion
+of a notebook named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basename.ipynb&lt;/code&gt; will be saved in a file called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basename.md&lt;/code&gt;. Since Jekyll
+blog posts are required to be named as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YEAR-MONTH-DAY-title.md&lt;/code&gt; (
+&lt;a href=&quot;https://jekyllrb.com/docs/posts/&quot;&gt;reference&lt;/a&gt;), it is easiest to follow that naming
+for notebooks. A notebook which should become a blog post should hence be named
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YEAR-MONTH-DAY-title.ipynb&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Blog posts on Jekyll sites live in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_posts&lt;/code&gt; folder. I decided to follow the example of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fastpages&lt;/code&gt;
+and create a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_notebooks&lt;/code&gt; folder in which to store the notebooks. I will then move the resulting
+Markdown file into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_posts&lt;/code&gt; folder, where it will be picked up by Jekyll. I will also move the
+images into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;assets/images/&lt;/code&gt; folder, which is the default location for images.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-bash-script-to-convert-jupyter-notebooks-to-markdown-jekyll-posts&quot;&gt;A bash script to convert Jupyter notebooks to Markdown Jekyll posts&lt;/h2&gt;
+&lt;p&gt;As a recap, here’s the steps we need to take:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt; to convert Jupyter notebook to Markdown&lt;/li&gt;
+  &lt;li&gt;Change image paths from local paths to absolute paths in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;assets/images/&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Move the resulting Markdown file into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_posts&lt;/code&gt; folder&lt;/li&gt;
+  &lt;li&gt;Move the image folder to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;assets/images/&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This can easily be done by a few lines of bash with some perl support (and a call to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter nbconvert&lt;/code&gt;
+which does the heavy-lifting, of course):&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Get file name without extension&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;notebook_file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;%.*&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Name of Markdown file will be base name + &quot;.md&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;md_notebook&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.md&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Convert notebook to Markdown&lt;/span&gt;
+jupyter nbconvert &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$notebook_file&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--to&lt;/span&gt; markdown
+&lt;span class=&quot;c&quot;&gt;# Fix image links to point to a place where Jekyll will pick up the images&lt;/span&gt;
+perl &lt;span class=&quot;nt&quot;&gt;-pi&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'s/\[png\]\(/[png]({{ site.url }}{{ site.baseurl }}\/assets\/images\//g'&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$md_notebook&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Move Markdown notebook to _posts/ directory&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$md_notebook&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;root_directory&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/_posts/&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Move images to a assets such that Jekyll finds them&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;_files&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;root_directory&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/assets/images/&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;front-matter&quot;&gt;Front matter&lt;/h2&gt;
+&lt;p&gt;Since &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt; does not change the content of Markdown cells, I can simply define the first cell of the
+notebook to be a Markdown cell and write the YAML front matter there. For example, the first cell of this
+notebook reads&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+title: &quot;Turning Jupyter notebooks into Jekyll blog posts&quot;
+toc: true
+category: &quot;Blogging platform&quot;
+tags: [&quot;Jekyll&quot;, &quot;Jupyter&quot;, &quot;Minimal Mistakes&quot;]
+badges: true
+---
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nbconvert&lt;/code&gt; will simply print that as the first lines of the created Markdown file. Jekyll will then interpret
+these lines as the YAML front matter, and will render the rest of the post based on the settings set here. I’m pretty
+satisfied with this solution: It’s easy and intuitive to write, and it doesn’t impair the functionality of
+the notebook in any way.&lt;/p&gt;
+
+&lt;h1 id=&quot;links-to-github-and-google-colab&quot;&gt;Links to GitHub and Google Colab&lt;/h1&gt;
+&lt;p&gt;Having a way to get the source notebook on GitHub or run in on Google Colab is a great feature that I
+really enjoy on other pages, so I’d love to have that on my blog. &lt;a href=&quot;https://github.com/fastai/fastpages&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fastpages&lt;/code&gt;&lt;/a&gt;
+has built-in functionality to add badges that I think works and looks great, so I will try to replicate
+some of that behavior here.&lt;/p&gt;
+
+&lt;h2 id=&quot;links&quot;&gt;Links&lt;/h2&gt;
+&lt;p&gt;Links to files on GitHub do generally have the form 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://github.com/&amp;lt;GitHub username or organization&amp;gt;/&amp;lt;repository name&amp;gt;/blob/&amp;lt;branch&amp;gt;/&amp;lt;file path&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To run notebooks stored on GitHub in Google Colab, the link has the form
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://colab.research.google.com/github/&amp;lt;GitHub username or organization&amp;gt;/&amp;lt;repository name&amp;gt;/blob/&amp;lt;branch&amp;gt;/&amp;lt;file path&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Knowing this, it’s easy to create links to the notebook generating a blog post.
+I am serving my site from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt; branch, and in my file
+organization mentioned above the notebook is going to be under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_notebooks/&amp;lt;filename&amp;gt;&lt;/code&gt;. Note that the
+repository name can be set in the Jekyll configuration, so if the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repository&lt;/code&gt; tag was set in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;, the
+repository information in the link can be filled by Jekyll. To achieve this, I simply replaced 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;GitHub username or organization&amp;gt;/&amp;lt;repository name&amp;gt;&lt;/code&gt; by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{{ site.repository }}&lt;/code&gt;. So my links
+are going to read&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://github.com/{{site.repository}}/blob/main/_notebooks/&amp;lt;filename&amp;gt;&lt;/code&gt;&lt;br /&gt;
+for GitHub and&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://colab.research.google.com/github/{{site.repository}}/blob/main/_notebooks/&amp;lt;filename&amp;gt;&lt;/code&gt;&lt;br /&gt;
+for Google Colab.&lt;/p&gt;
+
+&lt;h2 id=&quot;badges&quot;&gt;Badges&lt;/h2&gt;
+&lt;p&gt;Google Colab offers a badge which looks like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://colab.research.google.com/assets/colab-badge.svg&quot; alt=&quot;Google Colab&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I didn’t find a comparable badge for GitHub, but using &lt;a href=&quot;https://shields.io&quot;&gt;shields.io&lt;/a&gt; it’s easy to create one:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://img.shields.io/static/v1?label=&amp;amp;message=Open%20on%20GitHub&amp;amp;logo=github&amp;amp;color=lightgray&amp;amp;labelColor=gray&quot; alt=&quot;GitHub&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;including-badges-in-blog-posts&quot;&gt;Including badges in blog posts&lt;/h2&gt;
+&lt;p&gt;To include the badges in blog posts, I decided, again inspired by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fastpages&lt;/code&gt;, to add a new layout called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; to Minimal Mistakes. That new
+layout is the same as the default &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;single&lt;/code&gt; layout, but adds the badges. This solution has a couple of nice properties:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;It’s update friendly: If the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;single&lt;/code&gt; layout is changed, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; is updated accordingly.&lt;/li&gt;
+  &lt;li&gt;It works with the default excerpts: By default, the excerpt which is used to create the pagination links is done by
+taking the first few lines of the content of the post. If the badges were part of the content, the standard excerpt
+of all posts would start with the (non-rendered) code for the badges. By introducing the new layout and making the
+badges part of the layout rather than the content, we are avoiding this problem.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The new layout is only a few lines long and lives in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_layouts/notebook.html&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+layout: single
+---
+
+{% if page.badges %}
+  &amp;lt;hr&amp;gt;
+  &amp;lt;div style=&quot;display: flex; justify-content: center;&quot;&amp;gt;
+    &amp;lt;div style=&quot;padding-left: 0.5em; padding-right: 0.5em;&quot;&amp;gt;
+      &amp;lt;a href=&quot;https://github.com/{{ site.repository }}/blob/main/_notebooks/{{ page.filename }}&quot; target=&quot;_blank&quot;&amp;gt;
+        &amp;lt;img src=&quot;https://img.shields.io/static/v1?label=&amp;amp;message=Open%20on%20GitHub&amp;amp;logo=github&amp;amp;color=lightgray&amp;amp;labelColor=gray&quot; alt=&quot;Open on GitHub&quot;&amp;gt;
+      &amp;lt;/a&amp;gt;
+    &amp;lt;/div&amp;gt;
+    &amp;lt;div style=&quot;padding-left: 0.5em; padding-right: 0.5em;&quot;&amp;gt;
+      &amp;lt;a href=&quot;https://colab.research.google.com/github/{{ site.repository }}/blob/main/_notebooks/{{ page.filename }}&quot; target=&quot;_blank&quot;&amp;gt;
+        &amp;lt;img src=&quot;https://colab.research.google.com/assets/colab-badge.svg&quot; alt=&quot;Open in Colab&quot;&amp;gt;
+      &amp;lt;/a&amp;gt;
+    &amp;lt;/div&amp;gt;
+  &amp;lt;/div&amp;gt;
+  &amp;lt;hr&amp;gt;
+{% endif %}
+
+{{ content }}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The first line makes the layout inherit all properties of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;single&lt;/code&gt; layout. Before including the page content
+on the last line, there are a few lines of HTML code with some Jekyll tags. The HTML code gets only included if
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;page.badges&lt;/code&gt; is true. If it gets included, it adds the two tags with links as described above between two
+horizontal lines &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;hr&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To make this work seamlessly, I extended the bash code above by a few lines to add the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; layout and the
+file name to the YAML front matter automatically when converting Jupyter notebook.&lt;/p&gt;
+
+&lt;h1 id=&quot;running-the-conversion-as-a-github-action&quot;&gt;Running the conversion as a GitHub action&lt;/h1&gt;
+&lt;h2 id=&quot;starting-point&quot;&gt;Starting point&lt;/h2&gt;
+&lt;p&gt;I am already using GitHub actions to deploy my website to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh_pages&lt;/code&gt; branch. The workflow is very simple, it
+is checking out the current repository, building the website and pushing the result to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh_pages&lt;/code&gt;. The action is
+run on every push to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt;. Here is how my workflow looks currently:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;name: Deployment
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+          
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out current repo
+      - uses: actions/checkout@v2
+      # Build and deploy the site
+      - name: Build and deploy
+        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
+        env:
+          JEKYLL_ENV: 'production'
+        with:
+          github_token: $
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;features&quot;&gt;Features&lt;/h1&gt;
+&lt;h2 id=&quot;math-mode&quot;&gt;Math mode&lt;/h2&gt;
+&lt;p&gt;Math mode works in the Markdown part of the notebook, both inline mode $a^2 + b^2 = c^2$ and display mode&lt;/p&gt;
+
+\[i \hbar \frac{\partial}{\partial t}\Psi(\mathbf{r},t) = \hat H \Psi(\mathbf{r},t)\]
+
+&lt;h2 id=&quot;matplotlib-plot&quot;&gt;Matplotlib plot&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.01&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;fig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subplots&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://ptmerz.github.io/assets/images/2021-12-17-jupyter-blogs_files/2021-12-17-jupyter-blogs_2_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;code-with-output&quot;&gt;Code with output&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;one&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;two&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;three&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;one
+two
+three
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;I am really happy with this solution. I can write blog posts as Jupyter notebooks, needing only to add a
+first cell with the YAML front matter. I can commit these notebooks to GitHub,
+and the GitHub actions take care of the rest. The results fit perfectly in the Minimal Mistake theme, and
+allow readers to view the original notebook on GitHub or in Colab.&lt;/p&gt;
+
+&lt;p&gt;There are two small details I might look into some day:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;I am not completely satisfied by the design of the code output. I would like to make it easier to distinguish
+between the input of a code cell and its output.&lt;/li&gt;
+  &lt;li&gt;I would love to have a way to hide / collapse input or output of code cells like Jupyter Book. I think this
+feature would allow to write concise posts focusing on the essential parts. It is challenging, though,
+as it would require to either convert the notebook directly into HTML, or to further process the Markdown
+file created by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter nbconvert&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Pascal T. Merz</name></author><category term="Blogging platform" /><category term="Jekyll" /><category term="Jupyter" /><category term="Minimal Mistakes" /><summary type="html">One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works well with the Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of the website. I don’t think I need a very complicated solution - a static version of the notebook like it is for example used by nbsphinx should be enough. I used nbsphinx recently to include usage examples into the physical_validation documentation (see e.g. here), and quite liked the result. If I get this to work nicely, I do have a few additional features on my wish list, however: An automatic link to the source notebook on GitHub, which would allow readers to easily download the notebook and run it locally. An integration with Google Colab, which would allow readers to run the notebook online. Hiding certain input or output cells would allow me to highlight specific things while hiding less interesting boilerplate code without completely removing it.</summary></entry><entry><title type="html">Enabling blog comments using `giscus`</title><link href="https://ptmerz.github.io/blog/blog-comments/" rel="alternate" type="text/html" title="Enabling blog comments using `giscus`" /><published>2021-12-11T00:00:00+00:00</published><updated>2021-12-11T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/blog-comments</id><content type="html" xml:base="https://ptmerz.github.io/blog/blog-comments/">&lt;p&gt;Minimal Mistakes offers
 &lt;a href=&quot;https://mmistakes.github.io/minimal-mistakes/docs/configuration/#comments&quot;&gt;built-in support&lt;/a&gt;
 for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first
 three are external services. I didn’t pursue these options further, because I would prefer to

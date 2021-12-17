@@ -10,4 +10,10 @@ var store = [{
         "tags": ["Minimal Mistakes","Jekyll","Comments","giscus"],
         "url": "/blog/blog-comments/",
         "teaser": null
+      },{
+        "title": "Turning Jupyter notebooks into Jekyll blog posts",
+        "excerpt":"One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works...","categories": ["Blogging platform"],
+        "tags": ["Jekyll","Jupyter","Minimal Mistakes"],
+        "url": "/blog/jupyter-blogs/",
+        "teaser": null
       }]
