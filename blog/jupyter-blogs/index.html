@@ -296,7 +296,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          9 minute read
+          10 minute read
         
       </span>
     
@@ -311,12 +311,27 @@
           <aside class="sidebar__right sticky">
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              <ul class="toc__menu"><li><a href="#getting-started">Getting started</a></li><li><a href="#turning-a-jupyter-notebook-into-a-markdown-jekyll-post">Turning a Jupyter notebook into a Markdown Jekyll post</a><ul><li><a href="#naming-and-file-organization">Naming and file organization</a></li><li><a href="#a-bash-script-to-convert-jupyter-notebooks-to-markdown-jekyll-posts">A bash script to convert Jupyter notebooks to Markdown Jekyll posts</a></li><li><a href="#front-matter">Front matter</a></li></ul></li><li><a href="#links-to-github-and-google-colab">Links to GitHub and Google Colab</a><ul><li><a href="#links">Links</a></li><li><a href="#badges">Badges</a></li><li><a href="#including-badges-in-blog-posts">Including badges in blog posts</a></li></ul></li><li><a href="#running-the-conversion-as-a-github-action">Running the conversion as a GitHub action</a><ul><li><a href="#starting-point">Starting point</a></li></ul></li><li><a href="#features">Features</a><ul><li><a href="#math-mode">Math mode</a></li><li><a href="#matplotlib-plot">Matplotlib plot</a></li><li><a href="#code-with-output">Code with output</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li></ul>
+              <ul class="toc__menu"><li><a href="#getting-started">Getting started</a></li><li><a href="#turning-a-jupyter-notebook-into-a-markdown-jekyll-post">Turning a Jupyter notebook into a Markdown Jekyll post</a><ul><li><a href="#naming-and-file-organization">Naming and file organization</a></li><li><a href="#a-bash-script-to-convert-jupyter-notebooks-to-markdown-jekyll-posts">A bash script to convert Jupyter notebooks to Markdown Jekyll posts</a></li><li><a href="#front-matter">Front matter</a></li></ul></li><li><a href="#links-to-github-and-google-colab">Links to GitHub and Google Colab</a><ul><li><a href="#links">Links</a></li><li><a href="#badges">Badges</a></li><li><a href="#including-badges-in-blog-posts">Including badges in blog posts</a></li></ul></li><li><a href="#running-the-conversion-as-a-github-action">Running the conversion as a GitHub action</a></li><li><a href="#running-the-conversion-locally">Running the conversion locally</a></li><li><a href="#features">Features</a><ul><li><a href="#math-mode">Math mode</a></li><li><a href="#matplotlib-plot">Matplotlib plot</a></li><li><a href="#code-with-output">Code with output</a></li></ul></li><li><a href="#future-work">Future work</a></li><li><a href="#conclusion">Conclusion</a></li></ul>
 
             </nav>
           </aside>
         
         
+  <hr>
+  <div style="display: flex; justify-content: center;">
+    <div style="padding-left: 0.5em; padding-right: 0.5em;">
+      <a href="https://github.com/ptmerz/ptmerz.github.io/blob/main/_notebooks/2021-12-17-jupyter-blogs.ipynb" target="_blank">
+        <img src="https://img.shields.io/static/v1?label=&message=Open%20on%20GitHub&logo=github&color=lightgray&labelColor=gray" alt="Open on GitHub">
+      </a>
+    </div>
+    <div style="padding-left: 0.5em; padding-right: 0.5em;">
+      <a href="https://colab.research.google.com/github/ptmerz/ptmerz.github.io/blob/main/_notebooks/2021-12-17-jupyter-blogs.ipynb" target="_blank">
+        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
+      </a>
+    </div>
+  </div>
+  <hr>
+
 
 <p>One functionality I really want for my blog is to be able to easily turn Jupyter notebooks
 into blog posts. I do much exploration in notebooks, so being able to use them as the base
@@ -508,35 +523,31 @@ horizontal lines <code class="language-plaintext highlighter-rouge">&lt;hr&gt;</
 file name to the YAML front matter automatically when converting Jupyter notebook.</p>
 
 <h1 id="running-the-conversion-as-a-github-action">Running the conversion as a GitHub action</h1>
-<h2 id="starting-point">Starting point</h2>
 <p>I am already using GitHub actions to deploy my website to the <code class="language-plaintext highlighter-rouge">gh_pages</code> branch. The workflow is very simple, it
-is checking out the current repository, building the website and pushing the result to <code class="language-plaintext highlighter-rouge">gh_pages</code>. The action is
-run on every push to <code class="language-plaintext highlighter-rouge">main</code>. Here is how my workflow looks currently:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>name: Deployment
+is checking out the current repository, building the website and pushing the result to <code class="language-plaintext highlighter-rouge">gh_pages</code>. I therefore
+decided that all the machinery of turning Jupyter notebooks in blog posts should live in a separate action,
+meaning that there wouldn’t need to be any changes to my site repository to enable this functionality - except
+for adding notebooks to the <code class="language-plaintext highlighter-rouge">_notebooks</code> folder, of course.</p>
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
+<p>The action I wrote lives at <a href="https://github.com/ptmerz/jupyter-minimal-mistakes">ptmerz/jupyter-minimal-mistakes</a>
+and is ready to be used by others (but has only been tested by myself, so has certainly tons of potential
+improvements and probably a few bugs). The README has more details on its use. I also wrote some more details
+about creating that action at
+<a href="/blog/github-action/">A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts</a>.</p>
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-          
-jobs:
-  build-site:
-    runs-on: ubuntu-latest
-    steps:
-      # Check out current repo
-      - uses: actions/checkout@v2
-      # Build and deploy the site
-      - name: Build and deploy
-        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
-        env:
-          JEKYLL_ENV: 'production'
-        with:
-          github_token: $
+<h1 id="running-the-conversion-locally">Running the conversion locally</h1>
+<p>While I think that the GitHub action is the perfect way to handle this upstream, I sometimes want to run the
+conversion locally, mostly to be able to preview how a post looks using my local Jekyll installation. To do
+that, I have a clone of the repository of the GitHub action next to my local clone of my website repository.
+The first time I am using it, I need to copy the layout file into my website repository:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir -p username.github.io/_layouts
+cp jupyter-minimal-mistakes/_layouts/notebook.html username.github.io/_layouts/notebook.html
 </code></pre></div></div>
+<p>Then, from the site folder, I can simply call the <code class="language-plaintext highlighter-rouge">convert_notebooks.sh</code> script:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd username.github.io
+sh ../jupyter-minimal-mistakes/convert_notebooks.sh
+</code></pre></div></div>
+<p>This feels a tad hack-y, but it works perfectly, so I’m OK with that for now!</p>
 
 <h1 id="features">Features</h1>
 <h2 id="math-mode">Math mode</h2>
@@ -572,12 +583,7 @@ two
 three
 </code></pre></div></div>
 
-<h1 id="conclusion">Conclusion</h1>
-<p>I am really happy with this solution. I can write blog posts as Jupyter notebooks, needing only to add a
-first cell with the YAML front matter. I can commit these notebooks to GitHub,
-and the GitHub actions take care of the rest. The results fit perfectly in the Minimal Mistake theme, and
-allow readers to view the original notebook on GitHub or in Colab.</p>
-
+<h1 id="future-work">Future work</h1>
 <p>There are two small details I might look into some day:</p>
 <ul>
   <li>I am not completely satisfied by the design of the code output. I would like to make it easier to distinguish
@@ -587,6 +593,12 @@ feature would allow to write concise posts focusing on the essential parts. It i
 as it would require to either convert the notebook directly into HTML, or to further process the Markdown
 file created by <code class="language-plaintext highlighter-rouge">jupyter nbconvert</code>.</li>
 </ul>
+
+<h1 id="conclusion">Conclusion</h1>
+<p>I am really happy with this solution. I can write blog posts as Jupyter notebooks, needing only to add a
+first cell with the YAML front matter. I can commit these notebooks to GitHub,
+and the GitHub actions take care of the rest. The results fit perfectly in the Minimal Mistake theme, and
+allow readers to view the original notebook on GitHub or in Colab.</p>
 
 
         
@@ -652,7 +664,7 @@ file created by <code class="language-plaintext highlighter-rouge">jupyter nbcon
       
   <nav class="pagination">
     
-      <a href="/blog/blog-comments/" class="pagination--pager" title="Enabling blog comments using giscus
+      <a href="/blog/github-action/" class="pagination--pager" title="A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts
 ">Previous</a>
     
     
@@ -679,6 +691,47 @@ file created by <code class="language-plaintext highlighter-rouge">jupyter nbcon
     <div class="page__related">
       <h4 class="page__related-title">You May Also Enjoy</h4>
       <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/github-action/" rel="permalink">A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Starting point
+As mentioned in Turning Jupyter notebooks into Jekyll blog posts, I was deploying my Minimal Mistakes Jekyll site to the
+gh_pages branch using...</p>
+  </article>
+</div>
+
         
           
 

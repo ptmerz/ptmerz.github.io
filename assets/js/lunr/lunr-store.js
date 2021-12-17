@@ -11,6 +11,12 @@ var store = [{
         "url": "/blog/blog-comments/",
         "teaser": null
       },{
+        "title": "A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts",
+        "excerpt":"Starting point As mentioned in Turning Jupyter notebooks into Jekyll blog posts, I was deploying my Minimal Mistakes Jekyll site to the gh_pages branch using a simple workflow. I now wanted to add an action which would take all notebooks stored in a specific folder and turn them into markdown...","categories": ["Blogging platform"],
+        "tags": ["Minimal Mistakes","Jekyll","Jupyter","GitHub Actions"],
+        "url": "/blog/github-action/",
+        "teaser": null
+      },{
         "title": "Turning Jupyter notebooks into Jekyll blog posts",
         "excerpt":"One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works...","categories": ["Blogging platform"],
         "tags": ["Jekyll","Jupyter","Minimal Mistakes"],

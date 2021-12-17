@@ -1,0 +1,747 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts  |  Pascal T. Merz</title>
+<meta name="description" content="Starting point As mentioned in Turning Jupyter notebooks into Jekyll blog posts, I was deploying my Minimal Mistakes Jekyll site to the gh_pages branch using a simple workflow. I now wanted to add an action which would take all notebooks stored in a specific folder and turn them into markdown posts. ``` name: Deployment">
+
+
+  <meta name="author" content="Pascal T. Merz">
+  
+  <meta property="article:author" content="Pascal T. Merz">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Pascal T. Merz">
+<meta property="og:title" content="A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts">
+<meta property="og:url" content="https://ptmerz.github.io/blog/github-action/">
+
+
+  <meta property="og:description" content="Starting point As mentioned in Turning Jupyter notebooks into Jekyll blog posts, I was deploying my Minimal Mistakes Jekyll site to the gh_pages branch using a simple workflow. I now wanted to add an action which would take all notebooks stored in a specific folder and turn them into markdown posts. ``` name: Deployment">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-17T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://ptmerz.github.io/blog/github-action/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Pascal T. Merz",
+      "url": "https://ptmerz.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Pascal T. Merz Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Pascal T. Merz
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/blog/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/cv/">CV</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/pascal_merz.jpg" alt="Pascal T. Merz" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Pascal T. Merz</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Scientific Software<br />Molecular Simulations</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="mailto:pascal.merz@me.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/ptmerz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://gitlab.com/ptmerz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-gitlab" aria-hidden="true"></i><span class="label">GitLab</span></a></li>
+          
+        
+          
+            <li><a href="https://linkedin.com/in/pascal-t-merz" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts">
+    <meta itemprop="description" content="Starting pointAs mentioned in Turning Jupyter notebooks into Jekyll blog posts, I was deploying my Minimal Mistakes Jekyll site to thegh_pages branch using a simple workflow. I now wanted to add an action which would takeall notebooks stored in a specific folder and turn them into markdown posts.```name: Deployment">
+    <meta itemprop="datePublished" content="2021-12-17T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h1 id="starting-point">Starting point</h1>
+<p>As mentioned in <a href="/blog/jupyter-blogs/">Turning Jupyter notebooks into Jekyll blog posts</a>, I was deploying my Minimal Mistakes Jekyll site to the
+<code class="language-plaintext highlighter-rouge">gh_pages</code> branch using a simple workflow. I now wanted to add an action which would take
+all notebooks stored in a specific folder and turn them into markdown posts.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>name: Deployment
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out current repo
+      - uses: actions/checkout@v2
+
+      # TODO HERE:
+      # Action which turns notebooks into Markdown posts
+
+      # Build and deploy the site
+      - name: Build and deploy
+        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
+        env:
+          JEKYLL_ENV: 'production'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+</code></pre></div></div>
+
+<p>I had also written a simple script consisting of a few lines of bash and perl and a call to
+<code class="language-plaintext highlighter-rouge">jupyter nbconvert</code> to convert notebooks to Markdown posts, taking care of moving the file
+and the images and fixing image links. Finally, I found that creating a new layout type
+<code class="language-plaintext highlighter-rouge">notebook</code> was the easiest way to include badges to view the notebook on GitHub or Google
+Colab.</p>
+
+<p>I decided to bundle the two files which are required on top of the typical Jekyll files into
+the action, such that it could be used with zero installation.</p>
+
+<p>One seemingly small detail that doesn’t seem to be too clearly documented is how data can be
+accessed in the different stages of the action. Here is what I think to have understood:</p>
+<ul>
+  <li>When setting up the docker container (when running the <code class="language-plaintext highlighter-rouge">Dockerfile</code>), the files in the action
+repository are available. We can therefore copy any files into the container at that point.</li>
+  <li>The container will start in the ${GITHUB_WORKSPACE} which is mounted at <code class="language-plaintext highlighter-rouge">/github/workspace</code>.
+The files in the action repository are not available anymore, unless we have copied them
+previously.</li>
+  <li>${GITHUB_WORKSPACE} is also where, for example, <code class="language-plaintext highlighter-rouge">actions/checkout</code> is checking out the
+repository in. The workspace remains available throughout the steps of a job, which means that
+it can be used to store files which will be used by later actions.</li>
+</ul>
+
+<h1 id="setting-up-a-docker-container">Setting up a docker container</h1>
+<p>The action has relatively few requirements: We need an environment to run bash and perl and
+we need to be able to use <code class="language-plaintext highlighter-rouge">jupyter nbconvert</code>. I decided to use <code class="language-plaintext highlighter-rouge">jupyter/base-notebook</code>, which
+is a basic installation of Jupyter on Ubuntu. It is pretty light-weight but has all
+the features we will need pre-installed.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Dockerfile</code> is relatively easy, we only need to specify our starting point (the current
+<code class="language-plaintext highlighter-rouge">base-notebook</code> release), add the <code class="language-plaintext highlighter-rouge">notebook</code> layout and the action script, and set
+the action script as the entry point.</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Container image that runs our code.</span>
+<span class="c"># base-notebook is a ubuntu image with a light-weight Jupyter installation</span>
+<span class="k">FROM</span><span class="s"> jupyter/base-notebook:2021-12-16</span>
+<span class="k">USER</span><span class="s"> root</span>
+
+<span class="c"># The action needs the special notebook layout and the action script</span>
+<span class="c"># We'll just copy the entire folder there</span>
+<span class="k">COPY</span><span class="s"> . /action</span>
+
+<span class="c"># Run the action script when starting the docker container</span>
+<span class="k">ENTRYPOINT</span><span class="s"> ["/action/convert_notebooks.sh"]</span>
+</code></pre></div></div>
+
+<p>A few notes:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">jupyter/base-notebook</code> is released every day. For reproducibility, I picked a recent
+version. It’s unlikely I’ll have to change it any time soon.</li>
+  <li>By default, the <code class="language-plaintext highlighter-rouge">jupyter/base-notebook</code> has no root privileges. GitHub actions do, however,
+normally run using the <code class="language-plaintext highlighter-rouge">root</code> user. The non-privileged default user does not have access to
+the ${GITHUB_WORKSPACE} folder which is the default work directory for GitHub actions. To
+play well with other actions, I decided to use the <code class="language-plaintext highlighter-rouge">root</code> user rather than trying to work in
+a different folder.</li>
+  <li>When building the Docker container, we have full access to the files of the action. Since we
+need some of them later, I decided to simply copy the full folder to the <code class="language-plaintext highlighter-rouge">/action</code> location
+in the container.</li>
+  <li>The entry point is the script which does the entire conversion. The container will be run from
+${GITHUB_WORKSPACE}.</li>
+</ul>
+
+<h1 id="action-metadata-file">Action metadata file</h1>
+<p>The action metadata file defines the name and description of the action, as well as the
+run environment, the inputs, and the outputs. For our action, it is extremely easy since
+we need no inputs and no outputs. All we need to define is the name and the description,
+and that we are using docker to run it.</p>
+
+<p>The minimal metadata file looks like this:</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">Jupyter</span><span class="nv"> </span><span class="s">Minimal</span><span class="nv"> </span><span class="s">Mistakes'</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s1">'</span><span class="s">Convert</span><span class="nv"> </span><span class="s">Jupyter</span><span class="nv"> </span><span class="s">notebooks</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">Markdown</span><span class="nv"> </span><span class="s">blog</span><span class="nv"> </span><span class="s">posts</span><span class="nv"> </span><span class="s">ready</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">Jekyll</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">Minimal</span><span class="nv"> </span><span class="s">Mistakes</span><span class="nv"> </span><span class="s">theme'</span>
+<span class="na">runs</span><span class="pi">:</span>
+  <span class="na">using</span><span class="pi">:</span> <span class="s1">'</span><span class="s">docker'</span>
+  <span class="na">image</span><span class="pi">:</span> <span class="s1">'</span><span class="s">Dockerfile'</span>
+</code></pre></div></div>
+
+<h1 id="action-script">Action script</h1>
+<p>The action script itself is a simple bash script which does some sanity checks, and then
+loops over the notebooks found in the <code class="language-plaintext highlighter-rouge">_notebooks</code> folder and creates post for each of
+them. It also creates the <code class="language-plaintext highlighter-rouge">notebook</code> layout in the <code class="language-plaintext highlighter-rouge">_layouts</code> folder if it doesn’t exist.
+The full action script is <a href="https://github.com/ptmerz/jupyter-minimal-mistakes/blob/main/convert_notebooks.sh">here</a>.</p>
+
+<h1 id="tests">Tests</h1>
+<p>I added some basic functionality and regression tests. The test checks out the current
+repository and transforms a simple Jupyter notebook into Markdown. The resulting Markdown
+file is checked against a reference file, and the existence of the <code class="language-plaintext highlighter-rouge">notebook</code> layout file
+and the image file is verified. This is unlikely to catch all errors, but does at least
+perform some basic functionality check.</p>
+
+<h1 id="notes">Notes</h1>
+<p>To run a base image locally and play around a bit, this command is very helpful:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">--entrypoint</span> /bin/bash jupyter/base-notebook
+</code></pre></div></div>
+<p>This will start a docker container with the chosen base image (in the example above
+<code class="language-plaintext highlighter-rouge">jupter/base-notebook</code>) with a bash session as entry point. This is very handy to run some
+commands interactively and make sure that everything works as intended.</p>
+
+<h1 id="references">References</h1>
+<p><a href="https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action">GitHub Docs: Creating a Docker container action</a></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#github-actions" class="page__taxonomy-item" rel="tag">GitHub Actions</a><span class="sep">, </span>
+    
+      <a href="/tags/#jekyll" class="page__taxonomy-item" rel="tag">Jekyll</a><span class="sep">, </span>
+    
+      <a href="/tags/#jupyter" class="page__taxonomy-item" rel="tag">Jupyter</a><span class="sep">, </span>
+    
+      <a href="/tags/#minimal-mistakes" class="page__taxonomy-item" rel="tag">Minimal Mistakes</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blogging-platform" class="page__taxonomy-item" rel="tag">Blogging platform</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-12-17T00:00:00+00:00">December 17, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=A+GitHub+action+to+turn+Jupyter+notebooks+into+Minimal+Mistakes+Jekyll+blog+posts%20https%3A%2F%2Fptmerz.github.io%2Fblog%2Fgithub-action%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fptmerz.github.io%2Fblog%2Fgithub-action%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fptmerz.github.io%2Fblog%2Fgithub-action%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/blog-comments/" class="pagination--pager" title="Enabling blog comments using giscus
+">Previous</a>
+    
+    
+      <a href="/blog/jupyter-blogs/" class="pagination--pager" title="Turning Jupyter notebooks into Jekyll blog posts
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="giscus-comments"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/jupyter-blogs/" rel="permalink">Turning Jupyter notebooks into Jekyll blog posts
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">One functionality I really want for my blog is to be able to easily turn Jupyter notebooks
+into blog posts. I do much exploration in notebooks, so being able...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/blog-comments/" rel="permalink">Enabling blog comments using <code class="language-plaintext highlighter-rouge">giscus</code>
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Minimal Mistakes offers
+built-in support
+for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first
+three are external servi...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/mmistakes-mathjax/" rel="permalink">Minimal Mistakes and MathJax
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">After setting up this website with the beautiful
+Minimal Mistakes theme, I noticed that it
+wasn’t supporting typesetting math equations. Well, it can’t be to...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Pascal T. Merz. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    <script>
+  'use strict';
+
+  (function () {
+    var commentContainer = document.querySelector('#giscus-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://giscus.app/client.js');
+    script.setAttribute('data-repo', 'ptmerz/ptmerz.github.io');
+    script.setAttribute('data-repo-id', 'R_kgDOGfDKdQ');
+    script.setAttribute('data-category', 'Announcements');
+    script.setAttribute('data-category-id', 'DIC_kwDOGfDKdc4CAPY8');
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-theme', 'light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+  
+
+
+
+
+
+  </body>
+</html>

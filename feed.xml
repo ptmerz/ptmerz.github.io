@@ -1,4 +1,135 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-17T14:31:51+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">Turning Jupyter notebooks into Jekyll blog posts</title><link href="https://ptmerz.github.io/blog/jupyter-blogs/" rel="alternate" type="text/html" title="Turning Jupyter notebooks into Jekyll blog posts" /><published>2021-12-17T00:00:00+00:00</published><updated>2021-12-17T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/jupyter-blogs</id><content type="html" xml:base="https://ptmerz.github.io/blog/jupyter-blogs/">&lt;p&gt;One functionality I really want for my blog is to be able to easily turn Jupyter notebooks
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://ptmerz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://ptmerz.github.io/" rel="alternate" type="text/html" /><updated>2021-12-17T21:22:07+00:00</updated><id>https://ptmerz.github.io/feed.xml</id><title type="html">Pascal T. Merz</title><subtitle>Personal website</subtitle><author><name>Pascal T. Merz</name></author><entry><title type="html">A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts</title><link href="https://ptmerz.github.io/blog/github-action/" rel="alternate" type="text/html" title="A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts" /><published>2021-12-17T00:00:00+00:00</published><updated>2021-12-17T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/github-action</id><content type="html" xml:base="https://ptmerz.github.io/blog/github-action/">&lt;h1 id=&quot;starting-point&quot;&gt;Starting point&lt;/h1&gt;
+&lt;p&gt;As mentioned in &lt;a href=&quot;/blog/jupyter-blogs/&quot;&gt;Turning Jupyter notebooks into Jekyll blog posts&lt;/a&gt;, I was deploying my Minimal Mistakes Jekyll site to the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh_pages&lt;/code&gt; branch using a simple workflow. I now wanted to add an action which would take
+all notebooks stored in a specific folder and turn them into markdown posts.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;name: Deployment
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out current repo
+      - uses: actions/checkout@v2
+
+      # TODO HERE:
+      # Action which turns notebooks into Markdown posts
+
+      # Build and deploy the site
+      - name: Build and deploy
+        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
+        env:
+          JEKYLL_ENV: 'production'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I had also written a simple script consisting of a few lines of bash and perl and a call to
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter nbconvert&lt;/code&gt; to convert notebooks to Markdown posts, taking care of moving the file
+and the images and fixing image links. Finally, I found that creating a new layout type
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; was the easiest way to include badges to view the notebook on GitHub or Google
+Colab.&lt;/p&gt;
+
+&lt;p&gt;I decided to bundle the two files which are required on top of the typical Jekyll files into
+the action, such that it could be used with zero installation.&lt;/p&gt;
+
+&lt;p&gt;One seemingly small detail that doesn’t seem to be too clearly documented is how data can be
+accessed in the different stages of the action. Here is what I think to have understood:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;When setting up the docker container (when running the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;), the files in the action
+repository are available. We can therefore copy any files into the container at that point.&lt;/li&gt;
+  &lt;li&gt;The container will start in the ${GITHUB_WORKSPACE} which is mounted at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/github/workspace&lt;/code&gt;.
+The files in the action repository are not available anymore, unless we have copied them
+previously.&lt;/li&gt;
+  &lt;li&gt;${GITHUB_WORKSPACE} is also where, for example, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;actions/checkout&lt;/code&gt; is checking out the
+repository in. The workspace remains available throughout the steps of a job, which means that
+it can be used to store files which will be used by later actions.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;setting-up-a-docker-container&quot;&gt;Setting up a docker container&lt;/h1&gt;
+&lt;p&gt;The action has relatively few requirements: We need an environment to run bash and perl and
+we need to be able to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter nbconvert&lt;/code&gt;. I decided to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter/base-notebook&lt;/code&gt;, which
+is a basic installation of Jupyter on Ubuntu. It is pretty light-weight but has all
+the features we will need pre-installed.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; is relatively easy, we only need to specify our starting point (the current
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base-notebook&lt;/code&gt; release), add the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; layout and the action script, and set
+the action script as the entry point.&lt;/p&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Container image that runs our code.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# base-notebook is a ubuntu image with a light-weight Jupyter installation&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; jupyter/base-notebook:2021-12-16&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; root&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# The action needs the special notebook layout and the action script&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# We'll just copy the entire folder there&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; . /action&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Run the action script when starting the docker container&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/action/convert_notebooks.sh&quot;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A few notes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter/base-notebook&lt;/code&gt; is released every day. For reproducibility, I picked a recent
+version. It’s unlikely I’ll have to change it any time soon.&lt;/li&gt;
+  &lt;li&gt;By default, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter/base-notebook&lt;/code&gt; has no root privileges. GitHub actions do, however,
+normally run using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root&lt;/code&gt; user. The non-privileged default user does not have access to
+the ${GITHUB_WORKSPACE} folder which is the default work directory for GitHub actions. To
+play well with other actions, I decided to use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root&lt;/code&gt; user rather than trying to work in
+a different folder.&lt;/li&gt;
+  &lt;li&gt;When building the Docker container, we have full access to the files of the action. Since we
+need some of them later, I decided to simply copy the full folder to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/action&lt;/code&gt; location
+in the container.&lt;/li&gt;
+  &lt;li&gt;The entry point is the script which does the entire conversion. The container will be run from
+${GITHUB_WORKSPACE}.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;action-metadata-file&quot;&gt;Action metadata file&lt;/h1&gt;
+&lt;p&gt;The action metadata file defines the name and description of the action, as well as the
+run environment, the inputs, and the outputs. For our action, it is extremely easy since
+we need no inputs and no outputs. All we need to define is the name and the description,
+and that we are using docker to run it.&lt;/p&gt;
+
+&lt;p&gt;The minimal metadata file looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Jupyter&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Minimal&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Mistakes'&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Convert&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Jupyter&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;notebooks&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Markdown&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;ready&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;use&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Jekyll&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;and&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;the&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Minimal&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Mistakes&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;theme'&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;runs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;using&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;docker'&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Dockerfile'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;action-script&quot;&gt;Action script&lt;/h1&gt;
+&lt;p&gt;The action script itself is a simple bash script which does some sanity checks, and then
+loops over the notebooks found in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_notebooks&lt;/code&gt; folder and creates post for each of
+them. It also creates the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; layout in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_layouts&lt;/code&gt; folder if it doesn’t exist.
+The full action script is &lt;a href=&quot;https://github.com/ptmerz/jupyter-minimal-mistakes/blob/main/convert_notebooks.sh&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;tests&quot;&gt;Tests&lt;/h1&gt;
+&lt;p&gt;I added some basic functionality and regression tests. The test checks out the current
+repository and transforms a simple Jupyter notebook into Markdown. The resulting Markdown
+file is checked against a reference file, and the existence of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notebook&lt;/code&gt; layout file
+and the image file is verified. This is unlikely to catch all errors, but does at least
+perform some basic functionality check.&lt;/p&gt;
+
+&lt;h1 id=&quot;notes&quot;&gt;Notes&lt;/h1&gt;
+&lt;p&gt;To run a base image locally and play around a bit, this command is very helpful:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--entrypoint&lt;/span&gt; /bin/bash jupyter/base-notebook
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This will start a docker container with the chosen base image (in the example above
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupter/base-notebook&lt;/code&gt;) with a bash session as entry point. This is very handy to run some
+commands interactively and make sure that everything works as intended.&lt;/p&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action&quot;&gt;GitHub Docs: Creating a Docker container action&lt;/a&gt;&lt;/p&gt;</content><author><name>Pascal T. Merz</name></author><category term="Blogging platform" /><category term="Minimal Mistakes" /><category term="Jekyll" /><category term="Jupyter" /><category term="GitHub Actions" /><summary type="html">Starting point As mentioned in Turning Jupyter notebooks into Jekyll blog posts, I was deploying my Minimal Mistakes Jekyll site to the gh_pages branch using a simple workflow. I now wanted to add an action which would take all notebooks stored in a specific folder and turn them into markdown posts. ``` name: Deployment</summary></entry><entry><title type="html">Turning Jupyter notebooks into Jekyll blog posts</title><link href="https://ptmerz.github.io/blog/jupyter-blogs/" rel="alternate" type="text/html" title="Turning Jupyter notebooks into Jekyll blog posts" /><published>2021-12-17T00:00:00+00:00</published><updated>2021-12-17T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/jupyter-blogs</id><content type="html" xml:base="https://ptmerz.github.io/blog/jupyter-blogs/">&lt;p&gt;One functionality I really want for my blog is to be able to easily turn Jupyter notebooks
 into blog posts. I do much exploration in notebooks, so being able to use them as the base
 of blog posts would be great. I am hoping to find a solution which works well with the
 Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of
@@ -188,35 +319,31 @@ horizontal lines &lt;code class=&quot;language-plaintext highlighter-rouge&quot;
 file name to the YAML front matter automatically when converting Jupyter notebook.&lt;/p&gt;
 
 &lt;h1 id=&quot;running-the-conversion-as-a-github-action&quot;&gt;Running the conversion as a GitHub action&lt;/h1&gt;
-&lt;h2 id=&quot;starting-point&quot;&gt;Starting point&lt;/h2&gt;
 &lt;p&gt;I am already using GitHub actions to deploy my website to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh_pages&lt;/code&gt; branch. The workflow is very simple, it
-is checking out the current repository, building the website and pushing the result to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh_pages&lt;/code&gt;. The action is
-run on every push to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt;. Here is how my workflow looks currently:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;name: Deployment
+is checking out the current repository, building the website and pushing the result to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh_pages&lt;/code&gt;. I therefore
+decided that all the machinery of turning Jupyter notebooks in blog posts should live in a separate action,
+meaning that there wouldn’t need to be any changes to my site repository to enable this functionality - except
+for adding notebooks to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_notebooks&lt;/code&gt; folder, of course.&lt;/p&gt;
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
+&lt;p&gt;The action I wrote lives at &lt;a href=&quot;https://github.com/ptmerz/jupyter-minimal-mistakes&quot;&gt;ptmerz/jupyter-minimal-mistakes&lt;/a&gt;
+and is ready to be used by others (but has only been tested by myself, so has certainly tons of potential
+improvements and probably a few bugs). The README has more details on its use. I also wrote some more details
+about creating that action at
+&lt;a href=&quot;/blog/github-action/&quot;&gt;A GitHub action to turn Jupyter notebooks into Minimal Mistakes Jekyll blog posts&lt;/a&gt;.&lt;/p&gt;
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-          
-jobs:
-  build-site:
-    runs-on: ubuntu-latest
-    steps:
-      # Check out current repo
-      - uses: actions/checkout@v2
-      # Build and deploy the site
-      - name: Build and deploy
-        uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
-        env:
-          JEKYLL_ENV: 'production'
-        with:
-          github_token: $
+&lt;h1 id=&quot;running-the-conversion-locally&quot;&gt;Running the conversion locally&lt;/h1&gt;
+&lt;p&gt;While I think that the GitHub action is the perfect way to handle this upstream, I sometimes want to run the
+conversion locally, mostly to be able to preview how a post looks using my local Jekyll installation. To do
+that, I have a clone of the repository of the GitHub action next to my local clone of my website repository.
+The first time I am using it, I need to copy the layout file into my website repository:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mkdir -p username.github.io/_layouts
+cp jupyter-minimal-mistakes/_layouts/notebook.html username.github.io/_layouts/notebook.html
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Then, from the site folder, I can simply call the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;convert_notebooks.sh&lt;/code&gt; script:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cd username.github.io
+sh ../jupyter-minimal-mistakes/convert_notebooks.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This feels a tad hack-y, but it works perfectly, so I’m OK with that for now!&lt;/p&gt;
 
 &lt;h1 id=&quot;features&quot;&gt;Features&lt;/h1&gt;
 &lt;h2 id=&quot;math-mode&quot;&gt;Math mode&lt;/h2&gt;
@@ -252,12 +379,7 @@ two
 three
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;I am really happy with this solution. I can write blog posts as Jupyter notebooks, needing only to add a
-first cell with the YAML front matter. I can commit these notebooks to GitHub,
-and the GitHub actions take care of the rest. The results fit perfectly in the Minimal Mistake theme, and
-allow readers to view the original notebook on GitHub or in Colab.&lt;/p&gt;
-
+&lt;h1 id=&quot;future-work&quot;&gt;Future work&lt;/h1&gt;
 &lt;p&gt;There are two small details I might look into some day:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;I am not completely satisfied by the design of the code output. I would like to make it easier to distinguish
@@ -266,7 +388,13 @@ between the input of a code cell and its output.&lt;/li&gt;
 feature would allow to write concise posts focusing on the essential parts. It is challenging, though,
 as it would require to either convert the notebook directly into HTML, or to further process the Markdown
 file created by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jupyter nbconvert&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Pascal T. Merz</name></author><category term="Blogging platform" /><category term="Jekyll" /><category term="Jupyter" /><category term="Minimal Mistakes" /><summary type="html">One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works well with the Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of the website. I don’t think I need a very complicated solution - a static version of the notebook like it is for example used by nbsphinx should be enough. I used nbsphinx recently to include usage examples into the physical_validation documentation (see e.g. here), and quite liked the result. If I get this to work nicely, I do have a few additional features on my wish list, however: An automatic link to the source notebook on GitHub, which would allow readers to easily download the notebook and run it locally. An integration with Google Colab, which would allow readers to run the notebook online. Hiding certain input or output cells would allow me to highlight specific things while hiding less interesting boilerplate code without completely removing it.</summary></entry><entry><title type="html">Enabling blog comments using `giscus`</title><link href="https://ptmerz.github.io/blog/blog-comments/" rel="alternate" type="text/html" title="Enabling blog comments using `giscus`" /><published>2021-12-11T00:00:00+00:00</published><updated>2021-12-11T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/blog-comments</id><content type="html" xml:base="https://ptmerz.github.io/blog/blog-comments/">&lt;p&gt;Minimal Mistakes offers
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;I am really happy with this solution. I can write blog posts as Jupyter notebooks, needing only to add a
+first cell with the YAML front matter. I can commit these notebooks to GitHub,
+and the GitHub actions take care of the rest. The results fit perfectly in the Minimal Mistake theme, and
+allow readers to view the original notebook on GitHub or in Colab.&lt;/p&gt;</content><author><name>Pascal T. Merz</name></author><category term="Blogging platform" /><category term="Jekyll" /><category term="Jupyter" /><category term="Minimal Mistakes" /><summary type="html">One functionality I really want for my blog is to be able to easily turn Jupyter notebooks into blog posts. I do much exploration in notebooks, so being able to use them as the base of blog posts would be great. I am hoping to find a solution which works well with the Minimal Mistakes theme I’m using to make the result fit nicely with the remaining design of the website. I don’t think I need a very complicated solution - a static version of the notebook like it is for example used by nbsphinx should be enough. I used nbsphinx recently to include usage examples into the physical_validation documentation (see e.g. here), and quite liked the result. If I get this to work nicely, I do have a few additional features on my wish list, however: An automatic link to the source notebook on GitHub, which would allow readers to easily download the notebook and run it locally. An integration with Google Colab, which would allow readers to run the notebook online. Hiding certain input or output cells would allow me to highlight specific things while hiding less interesting boilerplate code without completely removing it.</summary></entry><entry><title type="html">Enabling blog comments using `giscus`</title><link href="https://ptmerz.github.io/blog/blog-comments/" rel="alternate" type="text/html" title="Enabling blog comments using `giscus`" /><published>2021-12-11T00:00:00+00:00</published><updated>2021-12-11T00:00:00+00:00</updated><id>https://ptmerz.github.io/blog/blog-comments</id><content type="html" xml:base="https://ptmerz.github.io/blog/blog-comments/">&lt;p&gt;Minimal Mistakes offers
 &lt;a href=&quot;https://mmistakes.github.io/minimal-mistakes/docs/configuration/#comments&quot;&gt;built-in support&lt;/a&gt;
 for commenting via Disqus, Discourse, Facebook, utterances, giscus and Staticman. The first
 three are external services. I didn’t pursue these options further, because I would prefer to
