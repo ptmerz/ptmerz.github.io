@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Deployment
 
 # Controls when the workflow will run
@@ -16,11 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out current repo
-      - uses: actions/checkout@v2
+      - name: Checkout current repository
+        uses: actions/checkout@v2
+      # Convert notebooks to Markdown posts
+      - name: Convert Jupyter notebooks to Markdown blog posts
+        uses: ptmerz/jupyter-minimal-mistakes@v1.0.0
       # Build and deploy the site
       - name: Build and deploy
         uses: EdricChan03/action-build-deploy-ghpages@v2.5.0
         env:
           JEKYLL_ENV: 'production'
         with:
+          jekyll_build_opts: '--verbose'
           github_token: ${{ secrets.GITHUB_TOKEN }}
